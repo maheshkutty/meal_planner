@@ -9,6 +9,7 @@ const SignInScreen = ({ navigation }) => {
     
     useEffect(() => {
         const backAction = () => {
+            
             navigation.navigate("UserDetail");
         }
         const backHandler = BackHandler.addEventListener(
@@ -25,6 +26,7 @@ const SignInScreen = ({ navigation }) => {
                 var user = userCredential.user;
                 signin({ email, userid: firebase.auth().currentUser.uid });
                 console.log(state);
+                
                 navigation.navigate('Home');
                 // ...
             })
@@ -37,26 +39,39 @@ const SignInScreen = ({ navigation }) => {
 
     return (
         <>
-            <Text style={styles.firstText}>Welcome
-                Sign in to continue
-            </Text>
-            <UserForm onPost={onSignIn} bname="Sign In" />
-            {state.errorMessage ? <Text>Something went wrong</Text> : null}
-            <Text style={styles.lastElement}>Create a new account
-                <TouchableOpacity onPress={() => navigation.navigate("UserDetail")}><Text> Sign Up!!</Text></TouchableOpacity>
-            </Text>
+            <Text style={styles.firstText}>Welcome</Text>
+             <Text style={styles.secondText}>Sign in to continue</Text>  
+            <UserForm onPost={onSignIn} bname= "Sign In" />
+            {state.errorMessage ? <Text style color= "#FF0000" >   Something went wrong</Text> : null}
+            <TouchableOpacity onPress={() => navigation.navigate('UserDetail') }>
+              <Text style={styles.lastElement}>Create a new Account?  Sign up</Text>
+          </TouchableOpacity>
         </>
     )
 }
 
 const styles = StyleSheet.create({
     firstText: {
-        marginTop: 200,
-        marginBottom: 20
+        marginTop: 150,
+        marginBottom: 5,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 30
     },
+
+    secondText: {
+        textAlign: 'center',
+        marginBottom: 35,
+        color: 'grey',
+        fontSize: 17
+    },
+        
     lastElement: {
         textAlign: 'center',
-        margin: 10
+        margin: 10,
+        paddingTop: 10,
+        color: 'grey',
+        fontSize: 13
     }
 });
 

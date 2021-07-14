@@ -46,7 +46,7 @@ function App() {
     <AuthProvider>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="ResolveAuth"
+          initialRouteName="Landing"
           screenOptions={{
             headerShown: false,
           }}

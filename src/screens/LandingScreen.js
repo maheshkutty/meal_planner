@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -13,33 +13,58 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import * as firebase from "firebase";
 import { Context as AuthContext } from "../context/AuthProvider";
 
-const LandingScreen = ({ navigation }) => {
-
+const LandingScreen = ({ navigation }) => 
+{
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/icon.png")} style={{height: 20, width:20}} />
-      <Text>Welcome!!</Text>
-      <Text>Sign in with account</Text>
+      
+      <View style={styles.container}>
+           <Image source={require("../../assets/logo.png")} 
+           style={{height: 350, width:350}} 
+           />   
+
+      <Text style={styles.text}>Welcome!!</Text>
+      <Text style={styles.textSign}>Sign in with account</Text>
       <View>
-        <Button
-          title="Registration"
-          onPress={() => navigation.navigate("UserDetail")}
-        >
-          <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
-            <Text style={styles.textSign}>Get Started</Text>
+        <Button style={styles.button} color= '#E91E63' title="Getting Started" onPress={() => navigation.navigate("UserDetail")}>
+          <LinearGradient style={styles.signIn}>
+            
             <MaterialIcons name="navigate-next" color="#fff" size={20} />
           </LinearGradient>
-        </Button>
-        <Button title="Sign in" onPress={() => navigation.navigate("SignIn")} />
+          </Button>
+          
+          <TouchableOpacity onPress={() => navigation.navigate('SignIn') }>
+              <Text style={styles.navigatebutton}>Already have an account? Sign in</Text>
+          </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+      paddingTop: 90,
+      alignItems: 'center',
+      backgroundColor: '#ffffff',
+      paddingBottom: 500
+  },
   signIn: {},
-  textSign: {},
+    textSign: {
+        color: 'grey',
+        paddingTop: 5,
+        fontSize: 15,
+        paddingBottom: 50
+    },
+    text: {
+        paddingTop: 30,
+        fontSize: 40,
+        fontWeight: "bold"
+    },
+    
+    navigatebutton: {
+        paddingTop: 20,
+        color: 'grey'
+
+    }
 });
 
 export default LandingScreen;

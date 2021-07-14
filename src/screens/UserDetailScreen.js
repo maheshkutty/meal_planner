@@ -13,7 +13,9 @@ import * as yup from "yup";
 import { Formik, useFormik } from "formik";
 
 let userSchema = yup.object().shape({
-  name: yup.string("Name should be integer").required("Name is required"),
+  name: yup
+  .string("Name should be character")
+  .required("Name is required"),
   weight: yup
     .number("Weight should be number")
     .required("Weight is required")
@@ -83,9 +85,11 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.conatiner}>
-      <Text>Create New account</Text>
-      <Input
+    <ScrollView style backgroundColor='#fff'>
+      <Text style={styles.contain} >Sign Up Now</Text>
+      <Text style={styles.containing} >Please fill the details and create account</Text>
+
+      <Input style={styles.container}
         label="Name"
         placeholder="Name"
         onChangeText={handleChange("name")}
@@ -158,14 +162,35 @@ const SignUpScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  conatiner: {
-    marginTop: 50,
+  
+  contain: {
+    marginTop: 80,
+    paddingBottom: 5,
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center'
+     
+  },
+
+  containing: {
+    
+    paddingBottom: 45,
+    fontSize: 15,
+    color: 'grey',
+    alignSelf: 'center'
+     
+  },
+
+  container: {
+    paddingBottom: 20
   },
   heightWeightStyle: {
     flexDirection: "column",
+    
   },
   nextIcon: {
     alignItems: "flex-end",
+    paddingTop: 5
   },
   dateStyle: {
     borderBottomWidth: 1,

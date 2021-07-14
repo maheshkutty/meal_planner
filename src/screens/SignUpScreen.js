@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-elements'
 import UserForm from '../component/UserForm';
 import firebase from 'firebase';
@@ -38,24 +38,31 @@ const SignUpScreen = ({ navigation, route }) => {
 
     return (
         <>
-            <Text style={styles.firstText}>Create New account</Text>
+            <Text style={styles.first} >Create New account</Text>
             <UserForm onPost={registerUser} bname="Sign Up" />
-            {state.errorMessage ? <Text>Something went wrong</Text> : null}
-            <Text style={styles.lastElement}>Already have a account
-                <Pressable onPress={() => navigation.navigate("SignIn")}><Text> Sign In!!</Text></Pressable>
-            </Text>
+            {state.errorMessage ? <Text style={StyleSheet.next}>  Something went wrong</Text> : null}
+            <TouchableOpacity onPress={() => navigation.navigate('UserDetail') }>
+              <Text style={styles.lastElement}>Create a new Account?  Sign up</Text>
+          </TouchableOpacity>
         </>
     )
 }
 
 const styles = StyleSheet.create({
-    firstText: {
-        marginTop: 200,
-        marginBottom: 20
+    first: {
+        paddingTop: 200,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingBottom: 30
+    },
+    next: {
+        color: '#FF0000'
     },
     lastElement: {
         textAlign: 'center',
-        margin: 10
+        margin: 10,
+        color: 'grey'
     }
 });
 

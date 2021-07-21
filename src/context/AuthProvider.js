@@ -30,7 +30,11 @@ const AuthReducer = (state, actions) => {
         email: "",
         userid: "",
         errorMessage: actions.payload.errorMessage,
-      };
+      }; 
+    case "signout":
+      return {
+        isSignedUp: null, errorMessage: "", email: "", userid: ""    
+      }
     default:
       return state;
   }
@@ -70,6 +74,12 @@ const restore_token = (dispatch) => {
   };
 };
 
+const signOut = (dispatch) => {
+  return () => {    
+    dispatch({ type: "signout", payload: "" });
+  };
+};
+
 export const { Context, Provider } = createDataContext(
   AuthReducer,
   {
@@ -77,6 +87,7 @@ export const { Context, Provider } = createDataContext(
     signin,
     showErr,
     restore_token,
+    signOut
   },
   { isSignedUp: null, errorMessage: "", email: "", userid: "" }
 );

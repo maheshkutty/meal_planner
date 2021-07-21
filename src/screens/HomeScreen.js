@@ -1,16 +1,23 @@
 import React, { useContext, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Button,
+} from "react-native";
 import { Context } from "../context/AuthProvider";
 import { getItemAsync } from "expo-secure-store";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const { state, signin, showErr } = useContext(Context);
   console.log(state);
   useEffect(() => {
     const backSync = async () => {
       try {
         userid = await getItemAsync("userid");
-        console.log('userid:', userid)
+        console.log("userid:", userid);
       } catch (e) {
         // Restoring token failed
         console.log(e);
@@ -19,11 +26,27 @@ const HomeScreen = () => {
     backSync();
   }, []);
   return (
-    <TouchableOpacity>
-      <Image source={require("../../assets/icon.png")} style={{height: 200, width:200}} />
-      <Text>Welcome to home screen</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity>
+        <Text style={styles.textStyle}>Welcome User</Text>
+        <Button title="Food Allergy" onPress={() => {
+          navigation.navigate("FoodAllergy");
+        }} />
+      </TouchableOpacity>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  textStyle: {
+    fontSize: 30,
+    textAlign: "center",
+    marginVertical: 40,
+  },
+});
 
 export default HomeScreen;

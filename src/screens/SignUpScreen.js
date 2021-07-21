@@ -15,7 +15,7 @@ const SignUpScreen = ({ navigation, route }) => {
     const registerUser = ({ email, password }) => {
         firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
             let user = userCredential.user;
-            console.log(user);
+            // console.log(user);
             firebase.firestore().collection('user').doc(firebase.auth().currentUser.uid).set({
                 name,
                 weight,

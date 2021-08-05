@@ -9,6 +9,7 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        foodAllergyArr: actions.payload.foodAllergyArr
       };
     case "signin":
       return {
@@ -16,6 +17,8 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        isAdmin: actions.payload.isAdmin,
+        foodAllergyArr: actions.payload.foodAllergyArr
       };
     case "restore_token":
       return {
@@ -23,6 +26,8 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        foodAllergyArr: actions.payload.foodAllergyArr,
+        isAdmin: actions.payload.isAdmin
       };
     case "errmsg":
       return {
@@ -30,11 +35,23 @@ const AuthReducer = (state, actions) => {
         email: "",
         userid: "",
         errorMessage: actions.payload.errorMessage,
-      }; 
+        isAdmin:false,
+        foodAllergyArr:[]
+      };
     case "signout":
       return {
-        isSignedUp: null, errorMessage: "", email: "", userid: ""    
-      }
+        isSignedUp: null,
+        errorMessage: "",
+        email: "",
+        userid: "",
+        isAdmin:false,
+        foodAllergyArr:[],
+      };
+    case "clear_error_message":
+      return {
+        ...state,
+        errorMessage: "",
+      };
     default:
       return state;
   }
@@ -52,8 +69,8 @@ const signup = (dispatch) => {
 };
 
 const signin = (dispatch) => {
-  return async ({ email, userid }) => {
-    dispatch({ type: "signin", payload: { email, userid } });
+  return async ({ email, userid, isAdmin, foodAllergyArr }) => {
+    dispatch({ type: "signin", payload: { email, userid, isAdmin, foodAllergyArr } });
     try {
       await SecureStore.setItemAsync("userid", userid);
     } catch (err) {
@@ -69,14 +86,21 @@ const showErr = (dispatch) => {
 };
 
 const restore_token = (dispatch) => {
-  return ({ email, userid }) => {
-    dispatch({ type: "restore_token", payload: { email, userid } });
+  
+  return ({ email, userid, foodAllergyArr, isAdmin }) => {
+    dispatch({ type: "restore_token", payload: { email, userid, foodAllergyArr, isAdmin } });
   };
 };
 
 const signOut = (dispatch) => {
-  return () => {    
+  return () => {
     dispatch({ type: "signout", payload: "" });
+  };
+};
+
+const clearErrorMessage = (dispatch) => {
+  return () => {
+    dispatch({ type: "clear_error_message", payload: "" });
   };
 };
 
@@ -87,7 +111,8 @@ export const { Context, Provider } = createDataContext(
     signin,
     showErr,
     restore_token,
-    signOut
+    signOut,
+    clearErrorMessage
   },
-  { isSignedUp: null, errorMessage: "", email: "", userid: "" }
+  { isSignedUp: null, errorMessage: "", email: "", userid: "", isAdmin: false, foodAllergyArr:[] }
 );

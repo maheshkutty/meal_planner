@@ -4,18 +4,17 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import { Input } from "react-native-elements";
 import { MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as yup from "yup";
 import { Formik, useFormik } from "formik";
+import DropDownPicker from "react-native-dropdown-picker";
 
 let userSchema = yup.object().shape({
-  name: yup
-  .string("Name should be character")
-  .required("Name is required"),
+  name: yup.string("Name should be character").required("Name is required"),
   weight: yup
     .number("Weight should be number")
     .required("Weight is required")
@@ -24,6 +23,7 @@ let userSchema = yup.object().shape({
   heFeet: yup
     .number("Feet should be number")
     .required("Feet is required")
+    .max(10, "Feet must be less than 10")
     .positive("Feet should be positive number")
     .integer("Feet should be positive number"),
   heInches: yup
@@ -33,14 +33,20 @@ let userSchema = yup.object().shape({
     .integer("Inches should be positive number"),
 });
 
-const checkDOB = () => {
-    
-}
+const checkDOB = () => {};
 
 const SignUpScreen = ({ navigation }) => {
+  DropDownPicker.setListMode("SCROLLVIEW");
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
+
+  const [open, setOpen] = useState(false);
+  const [gender, setGender] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+  ]);
 
   const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
     useFormik({
@@ -49,15 +55,16 @@ const SignUpScreen = ({ navigation }) => {
         name: "",
         weight: "",
         heFeet: "",
-        heInches: ""
+        heInches: "",
       },
       onSubmit: () => {
-        navigation.navigate("Signup", {
+        navigation.navigate("FoodAllergy", {
           name: values.name,
           weight: values.weight,
           heFeet: values.heFeet,
           heInches: values.heInches,
           date: getDateFormat(),
+          gender,
         });
       },
     });
@@ -79,17 +86,19 @@ const SignUpScreen = ({ navigation }) => {
 
   const getDateFormat = () => {
     let result = `${date.getDate()}/${
-        date.getMonth() + 1
+      date.getMonth() + 1
     }/${date.getFullYear()}`;
     return result;
   };
 
   return (
-    <ScrollView style backgroundColor='#fff'>
-      <Text style={styles.contain} >Sign Up Now</Text>
-      <Text style={styles.containing} >Please fill the details and create account</Text>
+    <ScrollView style backgroundColor="#fff">
+      <Text style={styles.contain}>Sign Up Now</Text>
+      <Text style={styles.containing}>
+        Please fill the details and create account
+      </Text>
 
-      <Input style={styles.container}
+      <Input
         label="Name"
         placeholder="Name"
         onChangeText={handleChange("name")}
@@ -97,6 +106,7 @@ const SignUpScreen = ({ navigation }) => {
         errorMessage={errors.name}
         touched={touched.name}
         value={values.name}
+        labelStyle={styles.labelStyle}
       />
       <Input
         label="Weight"
@@ -107,7 +117,35 @@ const SignUpScreen = ({ navigation }) => {
         touched={touched.weight}
         value={values.weight}
         rightIcon={<Text>KG</Text>}
+        labelStyle={styles.labelStyle}
       />
+        <Text style={{
+          fontSize:15,
+          marginHorizontal:10,
+          fontWeight:'bold',
+          color:"#0F52BA",
+          marginBottom:-10
+        }}>Gender</Text>
+        <DropDownPicker
+          labelProps="Gender"
+          open={open}
+          value={gender}
+          items={items}
+          setOpen={setOpen}
+          setValue={setGender}
+          setItems={setItems}
+          maxHeight={100}
+          style={{
+            backgroundColor:"white",
+            opacity:0.5,  
+            borderWidth:0,
+            borderBottomWidth:1,
+            marginBottom:10
+          }}
+          containerStyle={{
+            marginVertical:8,
+          }}
+        />
       <TouchableOpacity onPress={showDatepicker}>
         <Input
           label="DOB"
@@ -115,6 +153,7 @@ const SignUpScreen = ({ navigation }) => {
           disabled={true}
           value={getDateFormat()}
           onBlur={checkDOB}
+          labelStyle={styles.labelStyle}
         />
       </TouchableOpacity>
       {show && (
@@ -137,6 +176,7 @@ const SignUpScreen = ({ navigation }) => {
           touched={touched.heFeet}
           value={values.heFeet}
           rightIcon={<Text>Ft</Text>}
+          labelStyle={styles.labelStyle}
         />
         <Input
           label="Inches"
@@ -146,15 +186,13 @@ const SignUpScreen = ({ navigation }) => {
           errorMessage={errors.heInches}
           touched={touched.heInches}
           value={values.heInches}
-          rightIcon={<Text>IN</Text>}
+          rightIcon={<Text style={styles.labelStyle}>IN</Text>}
+          labelStyle={styles.labelStyle}
         />
       </View>
       <View style={styles.nextIcon}>
-        <TouchableOpacity
-          onPress={handleSubmit}
-          activeOpacity={0.6}
-        >
-          <MaterialIcons name="navigate-next" size={50} color="black" />
+        <TouchableOpacity onPress={handleSubmit} activeOpacity={0.6}>
+          <MaterialIcons name="navigate-next" size={50} color="#0F52BA" />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -162,35 +200,26 @@ const SignUpScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  
   contain: {
-    marginTop: 80,
+    marginTop: 60,
     paddingBottom: 5,
     fontSize: 25,
-    fontWeight: 'bold',
-    alignSelf: 'center'
-     
+    fontWeight: "bold",
+    alignSelf: "center",
+    color:"#0F52BA"
   },
-
   containing: {
-    
-    paddingBottom: 45,
+    paddingBottom: 30,
     fontSize: 15,
-    color: 'grey',
-    alignSelf: 'center'
-     
-  },
-
-  container: {
-    paddingBottom: 20
+    color: "grey",
+    alignSelf: "center",
   },
   heightWeightStyle: {
     flexDirection: "column",
-    
   },
   nextIcon: {
     alignItems: "flex-end",
-    paddingTop: 5
+    paddingTop: 5,
   },
   dateStyle: {
     borderBottomWidth: 1,
@@ -198,6 +227,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 15,
   },
+  labelStyle:{
+    color:"#0F52BA"
+  }
 });
 
 export default SignUpScreen;

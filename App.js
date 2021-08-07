@@ -32,6 +32,8 @@ import WeeklyPlan from "./src/screens/Admin/WeeklyPlan";
 import SearchAdminRecipe from "./src/screens/Admin/SearchAdminRecipe";
 import NutrionalScreen from "./src/screens/NutrionalScreen";
 import ReadWeeklyPlan from "./src/screens/Admin/ReadWeeklyPlan";
+import PlanRequestScreen from "./src/screens/Admin/PlanRequestScreen";
+import ShowUserScreen from "./src/screens/Admin/ShowUserScreen";
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -159,6 +161,9 @@ function AdminHome() {
           title: "Weekly Plan",
         }}
       />
+      <Tab.Screen name="PlanRequest" component={PlanRequestScreen} options={{
+        title:"Plan Request"
+      }} />
     </Tab.Navigator>
   );
 }
@@ -281,6 +286,9 @@ function App() {
               title: "Daily Plan",
             }}
           />
+          <Stack.Screen name="ShowUser" options={{
+            headerShown:false
+          }} component={ShowUserScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

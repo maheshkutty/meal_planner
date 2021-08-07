@@ -68,11 +68,11 @@ const SignInScreen = ({ navigation }) => {
               //navigation.navigate("AdminHome");
             } else {
               signin({ email, userid, isAdmin: false, foodAllergyArr: data.foodAllergyArr });
-              //navigation.navigate("Home");
+              //navigation.navigate("DrawerHome");
             }
           } else {
             signin({ email, userid, isAdmin: false });
-            //navigation.navigate("Home");
+            //navigation.navigate("DrawerHome");
           }
         });
         return true;

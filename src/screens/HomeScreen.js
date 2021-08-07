@@ -26,63 +26,76 @@ const HomeScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState("");
 
-  const defineSize = (gender) => {
-    if (gender == "female") {
-      return {
-        width: "100%",
-        height: 120,
-        padding: 20,
-        paddingVertical: 40,
-        overflow: "hidden",
-      };
-    } else {
-      return {
-        width: "100%",
-        height: 120,
-        padding: 20,
-        paddingVertical: 100,
-        overflow: "hidden",
-      };
-    }
-  };
-
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("user")
-      .doc(authState.userid.toString())
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          setUserName(data.name);
-          setUserGender(data.gender);
+    console.log("Home ", authState);
+    if (authState.userid != "") {
+      async function fetchData() {
+        try {
+          const doc = await firebase
+            .firestore()
+            .collection("user")
+            .doc(authState.userid.toString())
+            .get();
+          if (doc.exists) {
+            const data = doc.data();
+            setUserName(data.name);
+            setUserGender(data.gender);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    recommedRecipe(20, authState.userid);
-  }, []);
+        recommedRecipe(20, authState.userid);
+      }
+      fetchData();
+    }
+  }, [authState.isSignedUp]);
+
+  // useEffect(() => {
+  //   firebase
+  //     .firestore()
+  //     .collection("user")
+  //     .doc(authState.userid.toString())
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         const data = doc.data();
+  //         setUserName(data.name);
+  //         setUserGender(data.gender);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  //   recommedRecipe(20, authState.userid);
+  // }, []);
+
   return (
-    // <Text>Hello</Text>
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <UserHeader userName={userName} gender={userGender} />
 
       <Text>What do you want to cook?</Text>
-      <TouchableOpacity onPress={() => {
-        navigation.navigate("Search")
-      }}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Search");
+        }}
+      >
         <Text style={styles.searchStyle}>Click Here To Search</Text>
       </TouchableOpacity>
-      <View style={{
+      <View
+        style={{
           flexDirection: "row",
-          backgroundColor:"#edf8f0",
-          padding:10,
-          borderRadius:20,
-        }}>
-        <Image source={require("../../assets/homerecipe.jpg")} style={styles.homeRecipeImageStyle} />
-        <Text style={{ alignSelf:'center', flexWrap:'wrap', flex:1}}>We found {state.recommedRecipe.length || 0} recipes, that you may like</Text>
+          backgroundColor: "#edf8f0",
+          padding: 10,
+          borderRadius: 20,
+        }}
+      >
+        <Image
+          source={require("../../assets/homerecipe.jpg")}
+          style={styles.homeRecipeImageStyle}
+        />
+        <Text style={{ alignSelf: "center", flexWrap: "wrap", flex: 1 }}>
+          We found {state.recommedRecipe.length} recipes, that you may like
+        </Text>
       </View>
       <View style={styles.recipeview}>
         <Text style={styles.typeOfRecipe}>Recommended Recipes</Text>

@@ -5,6 +5,7 @@ import { LogBox } from "react-native";
 import pythonApi from "../config/pythonApi";
 import recipeApi from "../config/recipeApi";
 import { Context as AuthContext } from "../context/AuthProvider";
+import { useContext } from "react";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -116,6 +117,7 @@ const fetchLunchRecipe = (dispatch) => {
 };
 
 const recommedRecipe = (dispatch) => {
+  const { state } = useContext(AuthContext);
   return (size, userid) => {
     firebase
       .firestore()
@@ -140,17 +142,27 @@ const recommedRecipe = (dispatch) => {
             .then((response) => {
               response = response.data;
               recipeApi
-                .post("/search_list", {
-                  recipeArr: response.final_recipe,
-                  
-                })
+                .post(
+                  "/search_list",
+                  {
+                    recipeArr: response.final_recipe,
+                  },
+                  {
+                    headers: { authorization: state.accessToken },
+                  }
+                )
                 .then((response) => {
                   dispatch({
                     type: "fetch_recommed",
                     payload: response.data.data,
                   });
-                }).catch((error) => {
+                })
+                .catch((error) => {
                   console.log("mongodb api", error);
+                  dispatch({
+                    type: "fetch_recommed",
+                    payload: response.data.data,
+                  });
                 });
               // firebase
               //   .firestore()
@@ -174,18 +186,24 @@ const recommedRecipe = (dispatch) => {
             })
             .catch((error) => {
               console.log("python api", error);
+              dispatch({
+                type: "fetch_recommed",
+                payload: [],
+              });
             });
-        }
-        else
-        {
+        } else {
           dispatch({
             type: "fetch_recommed",
             payload: [],
-          }); 
+          });
         }
       })
       .catch((error) => {
         console.log(error);
+        dispatch({
+          type: "fetch_recommed",
+          payload: [],
+        });
       });
   };
 };

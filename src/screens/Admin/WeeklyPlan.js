@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import firebase from "firebase";
 import "firebase/firestore";
@@ -14,6 +15,33 @@ import { Context as AuthContext } from "../../context/AuthProvider";
 const WeeklyPlan = ({ navigation }) => {
   const [planStructure, setPlanStructure] = useState([]);
   const { state } = useContext(AuthContext);
+
+  const checkPlan = async () => {
+    try {
+      const snapshot = await firebase
+        .firestore()
+        .collection("/requestplan")
+        .doc(state.userid)
+        .get();
+      const flag = 0;
+      if(!snapshot.exists)
+      {
+          let userData = await firebase.firestore().collection("user").doc(state.userid).get();
+          userData = userData.data();
+          await firebase
+          .firestore()
+          .collection("/requestplan")
+          .doc(state.userid)
+          .set({
+            status: "pending",
+            name:userData.name,
+            userid:state.userid
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     firebase
@@ -33,31 +61,34 @@ const WeeklyPlan = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.mainText}>All Plans</Text>
-      <FlatList
-        data={planStructure}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("ReadWeeklyPlan", item);
-              }}
-            >
-              <View style={styles.planContainer}>
-                <Image
-                  source={require("../../../assets/plan.jpg")}
-                  style={{
-                    width: 350,
-                    height: 150,
-                  }}
-                />
-                <Text style={styles.textStyle}>{item.name}</Text>
-                <Text style={styles.textDecStyle}>{item.desc}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-      />
+      <View>
+        <FlatList
+          data={planStructure}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("ReadWeeklyPlan", item);
+                }}
+              >
+                <View style={styles.planContainer}>
+                  <Image
+                    source={require("../../../assets/plan.jpg")}
+                    style={{
+                      width: 350,
+                      height: 150,
+                    }}
+                  />
+                  <Text style={styles.textStyle}>{item.name}</Text>
+                  <Text style={styles.textDecStyle}>{item.desc}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+
       {state.isAdmin ? (
         <Button
           title="Add Plan"
@@ -66,7 +97,14 @@ const WeeklyPlan = ({ navigation }) => {
           }}
           buttonStyle={styles.buttonStyle}
         />
-      ) : null}
+      ) : (
+        <Button
+          title="Request for meal plan"
+          onPress={() => {
+            checkPlan();
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -82,13 +120,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#6200EE",
     padding: 10,
-    elevation:5
+    elevation: 5,
   },
   textStyle: {
     fontSize: 30,
     fontWeight: "bold",
     color: "white",
-    textTransform:'capitalize'
+    textTransform: "capitalize",
   },
   mainText: {
     textAlign: "center",
@@ -99,10 +137,10 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: "#0F52BA",
   },
-  textDecStyle:{
-    color:'white',
-    fontSize:15
-  }
+  textDecStyle: {
+    color: "white",
+    fontSize: 15,
+  },
 });
 
 export default WeeklyPlan;

@@ -4,23 +4,23 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button } from "react-native-elements";
 import firebase from "firebase";
 import "firebase/firestore";
-import { Context as AuthContext } from "../context/AuthProvider";
+import { Context as AuthContext } from "../../context/AuthProvider";
 import dayjs from "dayjs";
-import UserHeader from "../component/UserHeader";
 var customParseFormat = require("dayjs/plugin/customParseFormat");
-const AccountScreen = ({ navigation }) => {
+const ShowUserScreen = ({ navigation, route }) => {
   const { state, signOut } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
+  const userid = route.params;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       async function fetchData() {
         try {
-          if (state.userid != "") {
+          if (userid != "") {
             const doc = await firebase
               .firestore()
               .collection("user")
-              .doc(state.userid.toString())
+              .doc(userid.toString())
               .get();
             if (doc.exists) {
               const {
@@ -99,7 +99,6 @@ const AccountScreen = ({ navigation }) => {
           marginHorizontal: 25,
         }}
       >
-        <UserHeader userName={userData.name} gender={userData.gender} />
       </View>
       <Text style={styles.mainText}>Personal Details</Text>
       <View style={styles.formatInput}>
@@ -218,4 +217,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountScreen;
+export default ShowUserScreen;

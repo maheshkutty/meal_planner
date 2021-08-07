@@ -95,6 +95,7 @@ const SaveRoute = ({
   breakFastData,
   dinnerData,
   lunchData,
+  userid,
 }) => {
   //console.log(breakFastData);
   const storeDailyPlan = () => {
@@ -132,43 +133,78 @@ const SaveRoute = ({
         },
       };
       console.log(planStructure);
-      firebase
-        .firestore()
-        .collection("daily_plan")
-        .where("name", "==", planName)
-        .get()
-        .then((querySnapshot) => {
-          let chkFlag = false;
-          querySnapshot.forEach((doc) => {
-            if (doc.exists) {
-              chkFlag = true;
-              console.log("Plan with name already exist");
-            }
-          });
-          if(!chkFlag)
+      if (userid != "") {
+        firebase
+          .firestore()
+          .collection("userplan")
+          .doc(userid)
+          .set({
+            userid: userid,
+            plan: planStructure,
+          })
+          .then(() => {
+            console.log("Plan successfully added");
             firebase
               .firestore()
-              .collection("daily_plan")
-              .add(planStructure)
-              .then((docref) => {
-                console.log("Plan structure successfully written ", docref.id);
+              .collection("requestplan")
+              .doc(userid.toString())
+              .delete()
+              .then(() => {
+                console.log("data successfully deleted");
               })
               .catch((error) => {
                 console.log(error);
               });
-        });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        firebase
+          .firestore()
+          .collection("daily_plan")
+          .where("name", "==", planName)
+          .get()
+          .then((querySnapshot) => {
+            let chkFlag = false;
+            querySnapshot.forEach((doc) => {
+              if (doc.exists) {
+                chkFlag = true;
+                console.log("Plan with name already exist");
+              }
+            });
+            if (!chkFlag)
+              firebase
+                .firestore()
+                .collection("daily_plan")
+                .add(planStructure)
+                .then((docref) => {
+                  console.log(
+                    "Plan structure successfully written ",
+                    docref.id
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+          });
+      }
     }
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{
-        marginVertical:10,
-        textAlign:'center',
-        fontWeight:'bold',
-        fontSize:30,
-        color:"#0F52BA"
-      }}>Save the plan</Text>
+      <Text
+        style={{
+          marginVertical: 10,
+          textAlign: "center",
+          fontWeight: "bold",
+          fontSize: 30,
+          color: "#0F52BA",
+        }}
+      >
+        Save the plan
+      </Text>
       <Button
         title="Save"
         onPress={() => {
@@ -197,6 +233,11 @@ const CreateWeeklyPlan = ({ navigation, route }) => {
   const [lunchData, setLunchData] = useState([]);
   const [planName, setPlanName] = useState("");
   const [planDesc, setPlanDesc] = useState("");
+  const [userid, setUserId] = useState("");
+
+  useEffect(() => {
+    if (route.params?.generic == false) setUserId(route.params.userid);
+  }, []);
 
   useEffect(() => {
     if (route.params?.breakfast) {
@@ -255,6 +296,7 @@ const CreateWeeklyPlan = ({ navigation, route }) => {
             breakFastData={breakFastData}
             lunchData={lunchData}
             dinnerData={dinnerData}
+            userid={userid}
           />
         );
       default:
@@ -318,16 +360,16 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
   },
-  textStyle:{
-    fontSize:20,
-    textAlign:'center',
-    marginVertical:10,
-    fontWeight:'bold',
-    color:"#0F52BA"
+  textStyle: {
+    fontSize: 20,
+    textAlign: "center",
+    marginVertical: 10,
+    fontWeight: "bold",
+    color: "#0F52BA",
   },
-  buttonStyle:{
-    backgroundColor:"#0F52BA"
-  }
+  buttonStyle: {
+    backgroundColor: "#0F52BA",
+  },
 });
 
 export default CreateWeeklyPlan;

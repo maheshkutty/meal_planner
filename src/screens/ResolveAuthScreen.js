@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from "react-native";
 import { Context as AuthContext } from "../context/AuthProvider";
 import firebase from "firebase";
 import "firebase/firestore";
@@ -21,9 +21,8 @@ const ResolveAuthScreen = ({ navigation }) => {
           .get()
           .then((doc) => {
             if (doc.exists) {
-              console.log("True");
+              console.log("Reslove auth call");
               const data = doc.data();
-              console.log(user);
               restore_token({
                 email: user.email,
                 userid: user.uid,

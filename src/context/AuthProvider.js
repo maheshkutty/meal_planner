@@ -97,29 +97,16 @@ const showErr = (dispatch) => {
 };
 
 const restore_token = (dispatch) => {
-  return ({ email, userid, foodAllergyArr, isAdmin }) => {
-    //console.log("restore token", accessToken);
-    // getToken()
-    firebase
-      .auth()
-      .currentUser.getIdToken()
-      .then(function (idToken) {
-        // Send token to your backend via HTTPS
-        console.log("get token", idToken);
-        dispatch({
-          type: "restore_token",
-          payload: {
-            email,
-            userid,
-            foodAllergyArr,
-            isAdmin,
-            accessToken: idToken,
-          },
-        });
-        // ...
-      })
-      .catch(function (error) {
-        // Handle error
+  return async ({ email, userid, foodAllergyArr, isAdmin, accessToken }) => {
+      dispatch({
+        type: "restore_token",
+        payload: {
+          email,
+          userid,
+          foodAllergyArr,
+          isAdmin,
+          accessToken: accessToken//await firebase.auth().currentUser.getIdToken(),
+        },
       });
   };
 };

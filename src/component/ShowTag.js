@@ -25,7 +25,7 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
               removeTag(item);
             }}
           >
-            <MaterialIcons name="cancel" size={24} color="black" />
+            <MaterialIcons name="cancel" size={24} color="white" />
           </TouchableOpacity>
         </View>
       );
@@ -35,12 +35,13 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
     <View style={styles.conatiner}>
       {displayTags()}
       <Input
-        placeholder="Add tag"
+        placeholder="ADD TAG"
         value={newTag}
         autoCorrect={false}
         onChangeText={setNewtag}
         onKeyPress={(e) => {
           if (e.nativeEvent.key == " " && newTag != " ") {
+            console.log("Space key pressed")
             let tempTag = newTag.toLowerCase();
             tempTag = tempTag.trimEnd();
             if (stateTag.indexOf(tempTag) < 0) {
@@ -57,7 +58,7 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
           submitTag(stateTag);
         }}
       >
-        <Text style={styles.buttonTextStyle}>Save Tag</Text>
+        <Text style={styles.buttonTextStyle}>SAVE</Text>
       </Pressable>
     </View>
   );
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#0F52BA",
     borderRadius: 10,
-    padding: 2,
+    padding: 5,
     alignContent: "flex-start",
     alignItems: "center",
     marginLeft: 5,
@@ -82,6 +83,9 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     marginRight: 10,
+    fontSize:15,
+    fontWeight:'bold',
+    letterSpacing:1.5
   },
   buttonTextStyle: {
     color: "white",
@@ -94,7 +98,7 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: "#0F52BA",
-    width:250,
+    minWidth:300,
     marginBottom:5
   }
 });

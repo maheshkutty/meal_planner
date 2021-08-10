@@ -34,6 +34,7 @@ import NutrionalScreen from "./src/screens/NutrionalScreen";
 import ReadWeeklyPlan from "./src/screens/Admin/ReadWeeklyPlan";
 import PlanRequestScreen from "./src/screens/Admin/PlanRequestScreen";
 import ShowUserScreen from "./src/screens/Admin/ShowUserScreen";
+import PlanViewScreen from "./src/screens/Admin/PlanViewScreen";
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -104,9 +105,19 @@ function Home() {
             },
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="WeeklyUser"
           component={WeeklyPlan}
+          options={{
+            title: "Daily Plan",
+            tabBarIcon: ({ focused, color, size }) => {
+              return <FontAwesome name="calendar" size={size} color={color} />;
+            },
+          }}
+        /> */}
+        <Tab.Screen
+          name="PlanView"
+          component={PlanViewScreen}
           options={{
             title: "Daily Plan",
             tabBarIcon: ({ focused, color, size }) => {
@@ -158,12 +169,25 @@ function AdminHome() {
         name="Weekly"
         component={WeeklyPlan}
         options={{
-          title: "Weekly Plan",
+          title: "Daily Plan",
         }}
       />
-      <Tab.Screen name="PlanRequest" component={PlanRequestScreen} options={{
-        title:"Plan Request"
-      }} />
+      <Tab.Screen
+        name="PlanRequest"
+        component={PlanRequestScreen}
+        options={{
+          title: "Plan Request",
+          tabBarIcon: ({ focused, color, size }) => {
+            return (
+              <MaterialCommunityIcons
+                name="clipboard-list-outline"
+                size={size}
+                color={color}
+              />
+            );
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -286,9 +310,23 @@ function App() {
               title: "Daily Plan",
             }}
           />
-          <Stack.Screen name="ShowUser" options={{
-            headerShown:false
-          }} component={ShowUserScreen} />
+          <Stack.Screen
+            name="ShowUser"
+            options={{
+              headerShown: true,
+              title: "User Details",
+              headerStyle: {
+                backgroundColor: "#0F52BA",
+                elevation: 0,
+              },
+              headerTitleStyle: {
+                color: "white",
+              },
+              headerTransparent: false,
+              headerTintColor: "#fff",
+            }}
+            component={ShowUserScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

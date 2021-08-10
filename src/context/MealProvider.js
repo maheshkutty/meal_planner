@@ -125,78 +125,73 @@ const recommedRecipe = (dispatch) => {
       .doc(userid.toString())
       .get()
       .then((doc) => {
+        let recipe_like = [];
         if (doc.exists) {
           const data = doc.data();
-          const recipe_like = [];
           for (let i of Object.keys(data)) {
             recipe_like.push({
               recipe_name: data[i].recipe_name,
               ratings: data[i].rating,
             });
           }
-          pythonApi
-            .post("/meal_predicte", {
-              recipe_like,
-              size,
-            })
-            .then((response) => {
-              response = response.data;
-              recipeApi
-                .post(
-                  "/search_list",
-                  {
-                    recipeArr: response.final_recipe,
-                  },
-                  {
-                    headers: { authorization: state.accessToken },
-                  }
-                )
-                .then((response) => {
-                  dispatch({
-                    type: "fetch_recommed",
-                    payload: response.data.data,
-                  });
-                })
-                .catch((error) => {
-                  console.log("mongodb api", error);
-                  dispatch({
-                    type: "fetch_recommed",
-                    payload: response.data.data,
-                  });
-                });
-              // firebase
-              //   .firestore()
-              //   .collection("recipes")
-              //   .where("recipe_name", "in", response.final_recipe)
-              //   .get()
-              //   .then((querysnapshot) => {
-              //     const final_recipe = [];
-              //     querysnapshot.forEach((doc) => {
-              //       if (doc.exists) final_recipe.push(doc.data());
-              //     });
-              //     //console.log("hello", final_recipe);
-              //     dispatch({
-              //       type: "fetch_recommed",
-              //       payload: final_recipe,
-              //     });
-              //   })
-              //   .catch((error) => {
-              //     console.log("name_final", error);
-              //   });
-            })
-            .catch((error) => {
-              console.log("python api", error);
-              dispatch({
-                type: "fetch_recommed",
-                payload: [],
-              });
-            });
-        } else {
-          dispatch({
-            type: "fetch_recommed",
-            payload: [],
-          });
         }
+        pythonApi
+          .post("/meal_predicte", {
+            recipe_like,
+            size,
+          })
+          .then((response) => {
+            response = response.data;
+            recipeApi
+              .post(
+                "/search_list",
+                {
+                  recipeArr: response.final_recipe,
+                },
+                {
+                  headers: { authorization: state.accessToken },
+                }
+              )
+              .then((response) => {
+                dispatch({
+                  type: "fetch_recommed",
+                  payload: response.data.data,
+                });
+              })
+              .catch((error) => {
+                console.log("mongodb api", error);
+                dispatch({
+                  type: "fetch_recommed",
+                  payload: response.data.data,
+                });
+              });
+            // firebase
+            //   .firestore()
+            //   .collection("recipes")
+            //   .where("recipe_name", "in", response.final_recipe)
+            //   .get()
+            //   .then((querysnapshot) => {
+            //     const final_recipe = [];
+            //     querysnapshot.forEach((doc) => {
+            //       if (doc.exists) final_recipe.push(doc.data());
+            //     });
+            //     //console.log("hello", final_recipe);
+            //     dispatch({
+            //       type: "fetch_recommed",
+            //       payload: final_recipe,
+            //     });
+            //   })
+            //   .catch((error) => {
+            //     console.log("name_final", error);
+            //   });
+          })
+          .catch((error) => {
+            console.log("python api", error);
+            dispatch({
+              type: "fetch_recommed",
+              payload: [],
+            });
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -206,6 +201,32 @@ const recommedRecipe = (dispatch) => {
         });
       });
   };
+};
+
+const pythonAPIFunc = (authorization, recipeArr) => {
+  recipeApi
+    .post(
+      "/search_list",
+      {
+        recipeArr,
+      },
+      {
+        headers: { authorization },
+      }
+    )
+    .then((response) => {
+      dispatch({
+        type: "fetch_recommed",
+        payload: response.data.data,
+      });
+    })
+    .catch((error) => {
+      console.log("mongodb api", error);
+      dispatch({
+        type: "fetch_recommed",
+        payload: response.data.data,
+      });
+    });
 };
 
 export const { Context, Provider } = createDataContext(

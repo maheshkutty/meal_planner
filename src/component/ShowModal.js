@@ -102,7 +102,7 @@ const ShowModal = ({ recipe }) => {
         }}
       >
         <View style={styles.modalView}>
-          <Text style={styles.mainModelText}>Press space to add tag</Text>
+          <Text style={styles.mainModelText}>PRESS SPACE TO ADD TAG</Text>
           <ShowTag
             tags={populateTag()}
             submitTag={submitTag}
@@ -112,7 +112,7 @@ const ShowModal = ({ recipe }) => {
             style={[styles.button, styles.buttonClose]}
             onPress={() => setModalVisible(!modalVisible)}
           >
-            <Text style={styles.textStyle}>Cancel</Text>
+            <Text style={styles.textStyle}>CANCEL</Text>
           </Pressable>
         </View>
       </Modal>
@@ -120,7 +120,7 @@ const ShowModal = ({ recipe }) => {
         style={[styles.button, styles.buttonOpen]}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.textStyle}>Add Tag</Text>
+        <Text style={styles.textStyle}>ADD TAG</Text>
       </Pressable>
     </View>
   );
@@ -170,8 +170,9 @@ const styles = StyleSheet.create({
   },
   mainModelText: {
     marginHorizontal: 8,
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: "bold",
+    color: "#7bbfb5",
   },
 });
 

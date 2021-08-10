@@ -8,13 +8,19 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Context as MealContext } from "../context/MealProvider";
 import { Context as AuthContext } from "../context/AuthProvider";
 
 const MealScreen = ({ navigation }) => {
-  const { state, indianMeal, fetchBreakFast, fetchLunchRecipe, recommedRecipe } =
-  useContext(MealContext);
+  const {
+    state,
+    indianMeal,
+    fetchBreakFast,
+    fetchLunchRecipe,
+    recommedRecipe,
+  } = useContext(MealContext);
   const [noList, setnoList] = useState(0);
   const authContext = useContext(AuthContext);
 
@@ -25,9 +31,7 @@ const MealScreen = ({ navigation }) => {
     recommedRecipe(20, authContext.state.userid);
   }, []);
 
-  useEffect(() => {
-
-  },[state.recommedRecipe])
+  useEffect(() => {}, [state.recommedRecipe]);
 
   return (
     <ScrollView style={styles.container}>
@@ -58,6 +62,9 @@ const MealScreen = ({ navigation }) => {
               </TouchableOpacity>
             );
           }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
         />
       </View>
       <View style={styles.recipeview}>
@@ -87,6 +94,7 @@ const MealScreen = ({ navigation }) => {
               </TouchableOpacity>
             );
           }}
+          ListEmptyComponent={<Text style={{textAlign:'center', marginLeft:10}}>Not found any suitable recipes</Text>}
         />
       </View>
       <View style={styles.recipeview}>
@@ -115,6 +123,13 @@ const MealScreen = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
             );
+          }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
+          onEndReachedThreshold={0.8}
+          onEndReached={() => {
+            console.log("end reached");
           }}
         />
       </View>
@@ -145,6 +160,9 @@ const MealScreen = ({ navigation }) => {
               </TouchableOpacity>
             );
           }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
         />
       </View>
     </ScrollView>
@@ -177,11 +195,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "400",
     marginHorizontal: 10,
-    color:"#7bbfb5"
+    color: "#7bbfb5",
   },
   recipeview: {
     flexDirection: "column",
   },
+  activityStyle:{
+    marginLeft:10
+  }
 });
 
 export default MealScreen;

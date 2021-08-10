@@ -17,7 +17,7 @@ import firebase from "firebase";
 import "firebase/firestore";
 import UserHeader from "../component/UserHeader";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const { state, recommedRecipe } = useContext(MealContext);
   const [noList, setnoList] = useState(0);
   const authContext = useContext(AuthContext);
@@ -27,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
   const [userGender, setUserGender] = useState("");
 
   useEffect(() => {
-    console.log("Home ", authState);
+    //console.log("Home ", authState);
     if (authState.userid != "") {
       async function fetchData() {
         try {
@@ -48,7 +48,7 @@ const HomeScreen = ({ navigation }) => {
       }
       fetchData();
     }
-  }, [authState.isSignedUp]);
+  }, [authState.accessToken]);
 
   // useEffect(() => {
   //   firebase

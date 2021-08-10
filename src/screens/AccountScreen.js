@@ -52,7 +52,7 @@ const AccountScreen = ({ navigation }) => {
       fetchData();
     });
     return unsubscribe;
-  }, [state.isSignedUp]);
+  }, [state.accessToken]);
 
   const calDailyCalorie = () => {
     let BMR = 0;

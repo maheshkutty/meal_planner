@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Text, Button, Input } from "react-native-elements";
-import { View, StyleSheet, useWindowDimensions, FlatList } from "react-native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import {
+  View,
+  StyleSheet,
+  useWindowDimensions,
+  FlatList,
+  ToastAndroid,
+} from "react-native";
+import { TabView, TabBar } from "react-native-tab-view";
 import firebase from "firebase";
 import "firebase/firestore";
+
+const successMessage = (msg) => {
+  ToastAndroid.showWithGravityAndOffset(
+    msg,
+    ToastAndroid.LONG,
+    ToastAndroid.CENTER,
+    25,
+    30
+  );
+};
 
 const BreakFastRoute = ({ navigation, breakFastData }) => {
   return (
     <View style={styles.tabElementContainer}>
-      <Text style={styles.textStyle}>List of recipes</Text>
+      <Text style={styles.textStyle}>LIST OF RECIPES</Text>
       <FlatList
         data={breakFastData}
         keyExtractor={(item) => item.recipe_id}
@@ -30,7 +46,7 @@ const BreakFastRoute = ({ navigation, breakFastData }) => {
 const LunchRoute = ({ navigation, lunchData }) => {
   return (
     <View style={styles.tabElementContainer}>
-      <Text style={styles.textStyle}>List of recipes</Text>
+      <Text style={styles.textStyle}>LIST OF RECIPES</Text>
       <FlatList
         data={lunchData}
         keyExtractor={(item) => item.recipe_id}
@@ -52,7 +68,7 @@ const LunchRoute = ({ navigation, lunchData }) => {
 const DinnerRoute = ({ navigation, dinnerData }) => {
   return (
     <View style={styles.tabElementContainer}>
-      <Text style={styles.textStyle}>List Of recipes</Text>
+      <Text style={styles.textStyle}>LIST OF RECIPES</Text>
       <FlatList
         data={dinnerData}
         keyExtractor={(item) => item.recipe_id}
@@ -96,9 +112,10 @@ const SaveRoute = ({
   dinnerData,
   lunchData,
   userid,
+  navigation,
 }) => {
   //console.log(breakFastData);
-  const storeDailyPlan = () => {
+  const storeDailyPlan = async () => {
     if (planName == "") {
       console.log("can not store plan as name is blank");
     } else if (
@@ -134,27 +151,42 @@ const SaveRoute = ({
       };
       console.log(planStructure);
       if (userid != "") {
+        let planId = await firebase
+          .firestore()
+          .collection("requestplan")
+          .doc(userid.toString())
+          .get();
+        planId = planId.data().planid;
+        await firebase.firestore().collection("userplan").doc(userid).set({
+          userid: userid,
+          planid: planId,
+          plan: planStructure,
+        });
+        console.log("Plan successfully added");
+
         firebase
           .firestore()
-          .collection("userplan")
-          .doc(userid)
-          .set({
-            userid: userid,
-            plan: planStructure,
+          .collection("requestplan")
+          .doc(userid.toString())
+          .delete()
+          .then(() => {
+            console.log("data successfully deleted");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        firebase
+          .firestore()
+          .collection("planhistory")
+          .doc(userid.toString())
+          .collection("planid")
+          .doc(planId.toString())
+          .update({
+            status: "done",
           })
           .then(() => {
-            console.log("Plan successfully added");
-            firebase
-              .firestore()
-              .collection("requestplan")
-              .doc(userid.toString())
-              .delete()
-              .then(() => {
-                console.log("data successfully deleted");
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+            navigation.goBack();
+            successMessage("Meal Plan Successfully Saved");
           })
           .catch((error) => {
             console.log(error);
@@ -173,7 +205,7 @@ const SaveRoute = ({
                 console.log("Plan with name already exist");
               }
             });
-            if (!chkFlag)
+            if (!chkFlag) {
               firebase
                 .firestore()
                 .collection("daily_plan")
@@ -187,6 +219,9 @@ const SaveRoute = ({
                 .catch((error) => {
                   console.log(error);
                 });
+              navigation.goBack();
+              successMessage("Meal Plan Successfully Saved");
+            }
           });
       }
     }
@@ -209,6 +244,8 @@ const SaveRoute = ({
         title="Save"
         onPress={() => {
           storeDailyPlan();
+          // navigation.goBack();
+          // successMessage("Plan successfully saved");
         }}
         buttonStyle={styles.buttonStyle}
       />
@@ -297,6 +334,7 @@ const CreateWeeklyPlan = ({ navigation, route }) => {
             lunchData={lunchData}
             dinnerData={dinnerData}
             userid={userid}
+            navigation={navigation}
           />
         );
       default:

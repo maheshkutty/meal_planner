@@ -1,5 +1,8 @@
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
+import firebase from "firebase";
+import "firebase/firestore";
+import { useState } from "react";
 
 const AuthReducer = (state, actions) => {
   switch (actions.type) {
@@ -9,6 +12,8 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        foodAllergyArr: actions.payload.foodAllergyArr,
+        isSignedUp: true,
       };
     case "signin":
       return {
@@ -16,6 +21,9 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        isAdmin: actions.payload.isAdmin,
+        foodAllergyArr: actions.payload.foodAllergyArr,
+        isSignedUp: true,
       };
     case "restore_token":
       return {
@@ -23,18 +31,35 @@ const AuthReducer = (state, actions) => {
         email: actions.payload.email,
         userid: actions.payload.userid,
         errorMessage: "",
+        foodAllergyArr: actions.payload.foodAllergyArr,
+        isAdmin: actions.payload.isAdmin,
+        isSignedUp: true,
+        accessToken:actions.payload.accessToken
       };
     case "errmsg":
       return {
         ...state,
-        email: "",
+        email: null,
         userid: "",
         errorMessage: actions.payload.errorMessage,
-      }; 
+        isAdmin: false,
+        foodAllergyArr: []
+      };
     case "signout":
       return {
-        isSignedUp: null, errorMessage: "", email: "", userid: ""    
-      }
+        isSignedUp: false,
+        errorMessage: "",
+        email: null,
+        userid: "",
+        isAdmin: false,
+        foodAllergyArr: [],
+        accessToken:""
+      };
+    case "clear_error_message":
+      return {
+        ...state,
+        errorMessage: "",
+      };
     default:
       return state;
   }
@@ -52,8 +77,11 @@ const signup = (dispatch) => {
 };
 
 const signin = (dispatch) => {
-  return async ({ email, userid }) => {
-    dispatch({ type: "signin", payload: { email, userid } });
+  return async ({ email, userid, isAdmin, foodAllergyArr }) => {
+    dispatch({
+      type: "signin",
+      payload: { email, userid, isAdmin, foodAllergyArr },
+    });
     try {
       await SecureStore.setItemAsync("userid", userid);
     } catch (err) {
@@ -69,16 +97,33 @@ const showErr = (dispatch) => {
 };
 
 const restore_token = (dispatch) => {
-  return ({ email, userid }) => {
-    dispatch({ type: "restore_token", payload: { email, userid } });
+  return async ({ email, userid, foodAllergyArr, isAdmin, accessToken }) => {
+      dispatch({
+        type: "restore_token",
+        payload: {
+          email,
+          userid,
+          foodAllergyArr,
+          isAdmin,
+          accessToken: accessToken//await firebase.auth().currentUser.getIdToken(),
+        },
+      });
   };
 };
 
 const signOut = (dispatch) => {
-  return () => {    
+  return () => {
     dispatch({ type: "signout", payload: "" });
   };
 };
+
+const clearErrorMessage = (dispatch) => {
+  return () => {
+    dispatch({ type: "clear_error_message", payload: "" });
+  };
+};
+
+const getToken = () => {};
 
 export const { Context, Provider } = createDataContext(
   AuthReducer,
@@ -87,7 +132,16 @@ export const { Context, Provider } = createDataContext(
     signin,
     showErr,
     restore_token,
-    signOut
+    signOut,
+    clearErrorMessage,
   },
-  { isSignedUp: null, errorMessage: "", email: "", userid: "" }
+  {
+    isSignedUp: false,
+    errorMessage: "",
+    email: "",
+    userid: "",
+    isAdmin: false,
+    foodAllergyArr: [],
+    accessToken:""
+  }
 );

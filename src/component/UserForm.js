@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Input, Button } from "react-native-elements";
+import { Input, Button, Text } from "react-native-elements";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as yup from "yup";
 import { Formik, useFormik } from "formik";
@@ -13,7 +13,7 @@ const LoginSchema = yup.object().shape({
     .min(7, "Password must be 8 character long"),
 });
 
-const UserForm = ({ onPost, bname }) => {
+const UserForm = ({ onPost, bname, errorMessage }) => {
 
   const { handleChange, handleSubmit, values, errors, touched, handleBlur } =
     useFormik({
@@ -54,7 +54,8 @@ const UserForm = ({ onPost, bname }) => {
           <MaterialCommunityIcons name="account-key" size={24} color="black" />
         }
       />
-      <Button title={bname} onPress={handleSubmit} />
+      {errorMessage != "" ? <Text style={styles.errorStyle}>{errorMessage}</Text> : null}
+      <Button title={bname} onPress={handleSubmit} buttonStyle={styles.buttonStyle} />
     </View>
   );
 };
@@ -63,6 +64,16 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
   },
+  buttonStyle: {
+    color: "#0F52BA",
+    backgroundColor: "#0F52BA",
+    marginVertical: 20,
+    marginHorizontal:5
+  },
+  errorStyle:{
+    marginHorizontal:10,
+    color: '#FF0000'
+  }
 });
 
 export default UserForm;

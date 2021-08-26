@@ -7,62 +7,180 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Context as MealContext } from "../context/MealProvider";
+import { Context as AuthContext } from "../context/AuthProvider";
 
 const MealScreen = ({ navigation }) => {
-  const { state, indianMeal, fetchUserRate } = useContext(MealContext);
+  const {
+    state,
+    indianMeal,
+    fetchBreakFast,
+    fetchLunchRecipe,
+    recommedRecipe,
+  } = useContext(MealContext);
   const [noList, setnoList] = useState(0);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     indianMeal({ start: 0, end: 5 });
+    fetchBreakFast({ start: 0, end: 5 });
+    fetchLunchRecipe();
+    recommedRecipe(20, authContext.state.userid);
   }, []);
 
+  useEffect(() => {}, [state.recommedRecipe]);
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.typeOfRecipe}>Indian Recipes</Text>
-      <FlatList
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        data={state.meal}
-        keyExtractor={(item) => item.recipe_id.toString()}
-        onEndReached={()=> {}}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("MealDetails", {
-                  recipe: item
-                })
-              }
-            >
-              <View style={styles.recipeCard}>
-                <Image
-                  source={{ uri: item.image_url }}
-                  style={styles.imageStyle}
-                />
-                <Text style={styles.texStyle}>{item.recipe_name}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-      />
-    </SafeAreaView>
+    <ScrollView style={styles.container}>
+      <View style={styles.recipeview}>
+        <Text style={styles.typeOfRecipe}>Indian Recipes</Text>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={state.meal}
+          keyExtractor={(item) => item.recipe_id.toString()}
+          onEndReached={() => {}}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    recipe: item,
+                  })
+                }
+              >
+                <View style={styles.recipeCard}>
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={styles.imageStyle}
+                  />
+                  <Text style={styles.texStyle}>{item.recipe_name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
+        />
+      </View>
+      <View style={styles.recipeview}>
+        <Text style={styles.typeOfRecipe}>Recommended Recipes</Text>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={state.recommedRecipe}
+          keyExtractor={(item) => item.recipe_id.toString()}
+          onEndReached={() => {}}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    recipe: item,
+                  })
+                }
+              >
+                <View style={styles.recipeCard}>
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={styles.imageStyle}
+                  />
+                  <Text style={styles.texStyle}>{item.recipe_name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={<Text style={{textAlign:'center', marginLeft:10}}>Not found any suitable recipes</Text>}
+        />
+      </View>
+      <View style={styles.recipeview}>
+        <Text style={styles.typeOfRecipe}>BreakFast</Text>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={state.breakFast}
+          keyExtractor={(item) => item.recipe_id.toString()}
+          onEndReached={() => {}}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    recipe: item,
+                  })
+                }
+              >
+                <View style={styles.recipeCard}>
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={styles.imageStyle}
+                  />
+                  <Text style={styles.texStyle}>{item.recipe_name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
+          onEndReachedThreshold={0.8}
+          onEndReached={() => {
+            console.log("end reached");
+          }}
+        />
+      </View>
+      <View style={styles.recipeview}>
+        <Text style={styles.typeOfRecipe}>Lunch</Text>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={state.lunch}
+          keyExtractor={(item) => item.recipe_id.toString()}
+          onEndReached={() => {}}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    recipe: item,
+                  })
+                }
+              >
+                <View style={styles.recipeCard}>
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={styles.imageStyle}
+                  />
+                  <Text style={styles.texStyle}>{item.recipe_name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
+        />
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 30,
+    // marginTop: 40,
+    backgroundColor: "#f6f6f6",
   },
   recipeCard: {
     height: 200,
-    borderWidth: 1,
     width: 200,
     padding: 2,
     margin: 2,
-    borderRadius: 5,
+    elevation: 1,
+    borderRadius: 2,
   },
   texStyle: {
     fontWeight: "bold",
@@ -72,11 +190,18 @@ const styles = StyleSheet.create({
     width: 195,
     padding: 2,
   },
-  typeOfRecipe:{
-    marginVertical:20,
-    fontSize:20,
-    fontWeight:'bold',
-    marginHorizontal:10
+  typeOfRecipe: {
+    marginVertical: 10,
+    fontSize: 22,
+    fontWeight: "400",
+    marginHorizontal: 10,
+    color: "#7bbfb5",
+  },
+  recipeview: {
+    flexDirection: "column",
+  },
+  activityStyle:{
+    marginLeft:10
   }
 });
 

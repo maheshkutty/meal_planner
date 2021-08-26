@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Text,
-  SafeAreaView,
   FlatList,
   Image,
   TouchableOpacity,
@@ -20,15 +19,16 @@ const MealScreen = ({ navigation }) => {
     fetchBreakFast,
     fetchLunchRecipe,
     recommedRecipe,
+    fetchDinnerRecipe
   } = useContext(MealContext);
-  const [noList, setnoList] = useState(0);
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    indianMeal({ start: 0, end: 5 });
-    fetchBreakFast({ start: 0, end: 5 });
-    fetchLunchRecipe();
+    indianMeal(state.meal);
+    fetchBreakFast(state.breakFast);
+    fetchLunchRecipe(state.lunch);
     recommedRecipe(20, authContext.state.userid);
+    fetchDinnerRecipe(state.dinner);
   }, []);
 
   useEffect(() => {}, [state.recommedRecipe]);
@@ -42,7 +42,9 @@ const MealScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           data={state.meal}
           keyExtractor={(item) => item.recipe_id.toString()}
-          onEndReached={() => {}}
+          onEndReached={() => {
+            indianMeal(state.meal);
+          }}
           renderItem={({ item }) => {
             return (
               <TouchableOpacity
@@ -104,7 +106,10 @@ const MealScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           data={state.breakFast}
           keyExtractor={(item) => item.recipe_id.toString()}
-          onEndReached={() => {}}
+          onEndReached={() => {
+            fetchBreakFast(state.breakFast);
+          }}
+          onEndReachedThreshold={0.8}
           renderItem={({ item }) => {
             return (
               <TouchableOpacity
@@ -127,10 +132,6 @@ const MealScreen = ({ navigation }) => {
           ListEmptyComponent={
             <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
           }
-          onEndReachedThreshold={0.8}
-          onEndReached={() => {
-            console.log("end reached");
-          }}
         />
       </View>
       <View style={styles.recipeview}>
@@ -140,7 +141,45 @@ const MealScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           data={state.lunch}
           keyExtractor={(item) => item.recipe_id.toString()}
-          onEndReached={() => {}}
+          onEndReached={() => {
+            fetchLunchRecipe(state.lunch);
+          }}
+          onEndReachedThreshold={0.8}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    recipe: item,
+                  })
+                }
+              >
+                <View style={styles.recipeCard}>
+                  <Image
+                    source={{ uri: item.image_url }}
+                    style={styles.imageStyle}
+                  />
+                  <Text style={styles.texStyle}>{item.recipe_name}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <ActivityIndicator size="large" color="#0F52BA" style={styles.activityStyle} />
+          }
+        />
+      </View>
+      <View style={styles.recipeview}>
+        <Text style={styles.typeOfRecipe}>Dinner</Text>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={state.dinner}
+          keyExtractor={(item) => item.recipe_id.toString()}
+          onEndReached={() => {
+            fetchDinnerRecipe(state.dinner);
+          }}
+          onEndReachedThreshold={0.8}
           renderItem={({ item }) => {
             return (
               <TouchableOpacity

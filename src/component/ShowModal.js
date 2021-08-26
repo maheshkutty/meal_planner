@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Switch } from "react-native";
 import {
   Text,
@@ -19,7 +19,7 @@ const ShowModal = ({ recipe }) => {
   //const tagState = Object.entries(recipe.tag);
   const [modalVisible, setModalVisible] = useState(false);
   const [tag, setTag] = useState(recipe.tag);
-  const { state } = useState(AuthContext);
+  const { state } = useContext(AuthContext);
 
   const createTagSwitch = () => {
     const tagData = [];

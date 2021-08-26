@@ -90,7 +90,7 @@ function Home() {
         <Tab.Screen name="Meal" component={MealScreen} />
         <Tab.Screen name="Account" component={AccountScreen} />
         <Tab.Screen name="Search" component={SearchScreen} />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Nutrional"
           component={NutrionalScreen}
           options={{
@@ -105,7 +105,7 @@ function Home() {
               );
             },
           }}
-        />
+        /> */}
         {/* <Tab.Screen
           name="WeeklyUser"
           component={WeeklyPlan}
@@ -215,10 +215,10 @@ function CustomDrawerContent(props) {
         label="Search"
         onPress={() => props.navigation.navigate("Search")}
       />
-      <DrawerItem
+      {/* <DrawerItem
         label="Nutrional"
         onPress={() => props.navigation.navigate("Account")}
-      />
+      /> */}
       <DrawerItem
         label="Daily Plan"
         onPress={() => props.navigation.navigate("PlanView")}

@@ -5,7 +5,7 @@ import { LogBox } from "react-native";
 import pythonApi from "../config/pythonApi";
 import recipeApi from "../config/recipeApi";
 import { Context as AuthContext } from "../context/AuthProvider";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -31,28 +31,64 @@ const MealReducer = (state, actions) => {
       return { ...state, lunch: actions.payload, errorMessage: "" };
     case "fetch_recommed":
       return { ...state, recommedRecipe: actions.payload, errorMessage: "" };
+    case "fetch_dinner":
+      return { ...state, dinner: actions.payload, errorMessage: "" };
     default:
       return state;
   }
 };
 
 const indianMeal = (dispatch) => {
-  return async ({ start, end }) => {
-    firebase
-      .firestore()
-      .collection("indian_recipe")
-      .get()
-      .then((snapshot) => {
-        console.log(snapshot.size);
-        const mealData = [];
-        snapshot.forEach((doc) => {
-          mealData.push(doc.data());
+  const ref = firebase
+    .firestore()
+    .collection("indian_recipe")
+    .orderBy("recipe_name");
+  return (indianMeal) => {
+    if (indianMeal.length == 0) {
+      ref
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = [];
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "search_indian_meal", payload: mealData });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        dispatch({ type: "search_indian_meal", payload: mealData });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    } else {
+      ref
+        .startAfter(indianMeal[indianMeal.length - 1].recipe_name)
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = indianMeal;
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "search_indian_meal", payload: mealData });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    // firebase
+    //   .firestore()
+    //   .collection("indian_recipe")
+    //   .get()
+    //   .then((snapshot) => {
+    //     console.log(snapshot.size);
+    //     const mealData = [];
+    //     snapshot.forEach((doc) => {
+    //       mealData.push(doc.data());
+    //     });
+    //     dispatch({ type: "search_indian_meal", payload: mealData });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
 };
 
@@ -83,36 +119,116 @@ const fetchUserRate = (dispatch) => {
 };
 
 const fetchBreakFast = (dispatch) => {
-  return () => {
-    firebase
+  return (breakFast) => {
+    const ref = firebase
       .firestore()
       .collection("recipes")
-      .where("tag.breakfast", "==", 1)
-      .get()
-      .then((snapshot) => {
-        const mealData = [];
-        snapshot.forEach((doc) => {
-          mealData.push(doc.data());
+      .orderBy("recipe_name")
+      .where("tag.breakfast", "==", 1);
+    if (breakFast.length == 0) {
+      ref
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = [];
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_breakfast", payload: mealData });
         });
-        dispatch({ type: "fetch_breakfast", payload: mealData });
-      });
+    } else {
+      ref
+        .startAfter(breakFast[breakFast.length - 1].recipe_name)
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = breakFast;
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_breakfast", payload: mealData });
+        });
+    }
+    // firebase
+    //   .firestore()
+    //   .collection("recipes")
+    //   .where("tag.breakfast", "==", 1)
+    //   .get()
+    //   .then((snapshot) => {
+    //     const mealData = [];
+    //     snapshot.forEach((doc) => {
+    //       mealData.push(doc.data());
+    //     });
+    //     dispatch({ type: "fetch_breakfast", payload: mealData });
+    //   });
   };
 };
 
 const fetchLunchRecipe = (dispatch) => {
-  return () => {
-    firebase
+  return (lunch) => {
+    const ref = firebase
       .firestore()
       .collection("recipes")
-      .where("tag.lunch", "==", 1)
-      .get()
-      .then((snapshot) => {
-        const mealData = [];
-        snapshot.forEach((doc) => {
-          mealData.push(doc.data());
+      .orderBy("recipe_name")
+      .where("tag.lunch", "==", 1);
+    if (lunch.length == 0) {
+      ref
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = [];
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_lunch", payload: mealData });
         });
-        dispatch({ type: "fetch_lunch", payload: mealData });
-      });
+    } else {
+      ref
+        .startAfter(lunch[lunch.length - 1].recipe_name)
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = lunch;
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_lunch", payload: mealData });
+        });
+    }
+  };
+};
+
+const fetchDinnerRecipe = (dispatch) => {
+  return (dinner) => {
+    const ref = firebase
+      .firestore()
+      .collection("recipes")
+      .orderBy("recipe_name")
+      .where("tag.dinner", "==", 1);
+    if (dinner.length == 0) {
+      ref
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = [];
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_dinner", payload: mealData });
+        });
+    } else {
+      ref
+        .startAfter(dinner[dinner.length - 1].recipe_name)
+        .limit(5)
+        .get()
+        .then((snapshot) => {
+          const mealData = dinner;
+          snapshot.forEach((doc) => {
+            mealData.push(doc.data());
+          });
+          dispatch({ type: "fetch_dinner", payload: mealData });
+        });
+    }
   };
 };
 
@@ -237,6 +353,7 @@ export const { Context, Provider } = createDataContext(
     fetchBreakFast,
     fetchLunchRecipe,
     recommedRecipe,
+    fetchDinnerRecipe,
   },
   {
     meal: [],
@@ -246,5 +363,7 @@ export const { Context, Provider } = createDataContext(
     dinner: [],
     lunch: [],
     recommedRecipe: [],
+    dinner:[]
   }
 );
+

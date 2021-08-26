@@ -7,8 +7,8 @@ import {
   useWindowDimensions,
   FlatList,
   TouchableOpacity,
-  Image
 } from "react-native";
+import { Image } from "react-native-elements";
 import firebase from "firebase";
 import "firebase/firestore";
 import { Context as AuthContext } from "../../context/AuthProvider";
@@ -106,10 +106,13 @@ const ExistingPlan = ({ customPlan, navigation }) => {
                 }}
               >
                 <View style={styles.planContainer}>
-                  <Image
-                    source={require("../../../assets/plan.jpg")}
-                    style={styles.imageStyle}
-                  />
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={require("../../../assets/plan.jpg")}
+                      style={styles.imageStyle}
+                    />
+                  </View>
+
                   <Text style={styles.textStylePlan}>{item.name}</Text>
                   <Text style={styles.textDecStylePlan}>{item.desc}</Text>
                 </View>
@@ -199,7 +202,7 @@ const ShowUserScreen = ({ navigation, route }) => {
       case "UserProfile":
         return <UserProfile userData={userData} />;
       case "ExistingPlan":
-        return <ExistingPlan navigation={navigation} customPlan={customPlan}  />;
+        return <ExistingPlan navigation={navigation} customPlan={customPlan} />;
       default:
         return null;
     }
@@ -335,13 +338,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f6f6f6",
   },
-  tabbar:{
-    backgroundColor:"#0F52BA"
+  tabbar: {
+    backgroundColor: "#0F52BA",
   },
   imageStyle: {
-    width:370,
-    height:150,
-    resizeMode:'cover'
+    height: 150,
+    resizeMode: "cover",
   },
 });
 

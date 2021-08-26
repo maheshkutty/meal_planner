@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, Button, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
+import { Button } from "react-native-elements";
 import firebase from "firebase";
 import "firebase/firestore";
 
@@ -22,22 +23,21 @@ const AdminHomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  conatiner:{
-    flex:1,
-    justifyContent:'center',
-    alignContent:'center',
-    alignItems:'center'
+  conatiner: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
   },
   buttonStyle: {
-    color: "#0F52BA",
     width: 100,
     backgroundColor: "#0F52BA",
-    marginVertical: 20,
+    fontWeight:'bold'
   },
   textStyle: {
     fontSize: 30,
     textAlign: "center",
-    marginVertical: 40,
+    marginVertical: 20,
   },
 });
 

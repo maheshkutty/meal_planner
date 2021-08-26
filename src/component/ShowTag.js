@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   conatiner: {
     flexDirection: "row",
     alignSelf: "flex-start",
-    flexWrap: "wrap",
+    flexWrap: "wrap"
   },
   tagElement: {
     flexDirection: "row",
@@ -95,10 +95,10 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     elevation: 2,
+    flexGrow:1
   },
   buttonClose: {
     backgroundColor: "#0F52BA",
-    minWidth:300,
     marginBottom:5
   }
 });

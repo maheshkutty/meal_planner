@@ -4,24 +4,18 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   FlatList,
-  ImageBackground,
   ScrollView,
 } from "react-native";
 import { Image } from "react-native-elements";
 import { Context as MealContext } from "../context/MealProvider";
 import { Context as AuthContext } from "../context/AuthProvider";
-import { getItemAsync } from "expo-secure-store";
 import firebase from "firebase";
 import "firebase/firestore";
 import UserHeader from "../component/UserHeader";
 
 const HomeScreen = ({ navigation, route }) => {
   const { state, recommedRecipe } = useContext(MealContext);
-  const [noList, setnoList] = useState(0);
-  const authContext = useContext(AuthContext);
-
   const { state: authState } = useContext(AuthContext);
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState("");

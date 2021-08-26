@@ -26,7 +26,7 @@ const SearchScreen = ({ navigation }) => {
         "/recipe",
         {
           search,
-          foodAllergy: [],
+          foodAllergy: state.foodAllergyArr,
           limit: recipeLimit,
         },
         {

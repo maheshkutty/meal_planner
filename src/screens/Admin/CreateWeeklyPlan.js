@@ -37,7 +37,7 @@ const BreakFastRoute = ({ navigation, breakFastData }) => {
         onPress={() => {
           navigation.navigate("SearchAdminRecipe", { flag: "breakfast" });
         }}
-        buttonStyle={styles.buttonStyle}
+        buttonStyle={[styles.buttonStyle,styles.addMargin]}
       />
     </View>
   );
@@ -407,7 +407,12 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     backgroundColor: "#0F52BA",
+    //marginVertical:10,
+    marginHorizontal:10
   },
+  addMargin:{
+    marginVertical:10
+  }
 });
 
 export default CreateWeeklyPlan;

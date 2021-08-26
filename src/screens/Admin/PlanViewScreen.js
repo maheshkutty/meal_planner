@@ -6,13 +6,12 @@ import {
   useWindowDimensions,
   FlatList,
   TouchableOpacity,
-  ScrollView,
-  ToastAndroid,
 } from "react-native";
 import firebase from "firebase";
 import "firebase/firestore";
 import { Context as AuthContext } from "../../context/AuthProvider";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { TabView, TabBar } from "react-native-tab-view";
+import ToastMessage from "../../component/ToastMessage";
 
 const CommonPlan = ({ planStructure, navigation }) => {
   return (
@@ -54,6 +53,7 @@ const CustomPlan = ({ customPlan, checkPlan, navigation }) => {
           checkPlan();
         }}
         buttonStyle={styles.buttonStyle}
+        type="outline"
       />
       <View>
         <FlatList
@@ -133,20 +133,9 @@ const PlanViewScreen = ({ navigation }) => {
             planid: seq,
             date: firebase.firestore.Timestamp.fromDate(new Date()),
           });
+        ToastMessage("Request Send To Admin");
       } else {
-        const planHistory = await firebase
-          .firestore()
-          .collection("planhistory")
-          .doc(state.userid)
-          .get();
-        ToastAndroid.showWithGravityAndOffset(
-          "Request For meal plan already send",
-          ToastAndroid.LONG,
-          ToastAndroid.CENTER,
-          25,
-          30
-        );
-        console.log(planHistory.data());
+        ToastMessage("Request For meal plan already send");
       }
     } catch (error) {
       console.log(error);
@@ -166,7 +155,7 @@ const PlanViewScreen = ({ navigation }) => {
         });
         setPlanStructure(planData);
       });
-  }, []);
+  }, [state.accessToken]);
 
   useEffect(() => {
     firebase
@@ -182,7 +171,7 @@ const PlanViewScreen = ({ navigation }) => {
         }
         setCustomPlan(customPlan);
       });
-  }, []);
+  }, [state.accessToken]);
 
   const layout = useWindowDimensions();
 
@@ -275,8 +264,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttonStyle: {
-    backgroundColor: "#0F52BA",
+    // backgroundColor: "#0F52BA",
     marginTop: 10,
+    marginHorizontal: 10,
   },
   textDecStyle: {
     color: "white",
@@ -298,9 +288,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   imageStyle: {
-    width:400,
-    height:150,
-    resizeMode:'cover'
+    width: 400,
+    height: 150,
+    resizeMode: "cover",
   },
 });
 

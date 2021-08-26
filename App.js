@@ -35,6 +35,7 @@ import ReadWeeklyPlan from "./src/screens/Admin/ReadWeeklyPlan";
 import PlanRequestScreen from "./src/screens/Admin/PlanRequestScreen";
 import ShowUserScreen from "./src/screens/Admin/ShowUserScreen";
 import PlanViewScreen from "./src/screens/Admin/PlanViewScreen";
+import AddRecipeScreen from "./src/screens/Admin/AddRecipeScreen";
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -143,6 +144,9 @@ function AdminHome() {
           } else if (route.name == "Weekly") {
             iconName = "calendar";
           }
+          else if(route.name == "AddRecipe"){
+            iconName = "edit";
+          }
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
       })}
@@ -188,6 +192,9 @@ function AdminHome() {
           },
         }}
       />
+      <Tab.Screen name="AddRecipe" component={AddRecipeScreen} options={{
+        title:"Add Recipe"
+      }} />
     </Tab.Navigator>
   );
 }
@@ -206,7 +213,7 @@ function CustomDrawerContent(props) {
       />
       <DrawerItem
         label="Search"
-        onPress={() => props.navigation.navigate("Account")}
+        onPress={() => props.navigation.navigate("Search")}
       />
       <DrawerItem
         label="Nutrional"
@@ -214,7 +221,7 @@ function CustomDrawerContent(props) {
       />
       <DrawerItem
         label="Daily Plan"
-        onPress={() => props.navigation.navigate("WeeklyUser")}
+        onPress={() => props.navigation.navigate("PlanView")}
       />
     </DrawerContentScrollView>
   );
@@ -327,6 +334,11 @@ function App() {
             }}
             component={ShowUserScreen}
           />
+          <Stack.Screen name="AddRecipe" options={{
+              headerShown: true,
+              title: "Add recipe",
+              headerTransparent: false,
+            }} component={AddRecipeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

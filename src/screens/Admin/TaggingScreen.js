@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,11 +13,20 @@ import recipeApi from "../../config/recipeApi";
 import "firebase/firestore";
 import { Context as AuthContext } from "../../context/AuthProvider";
 
-const TaggingScreen = ({ navigation }) => {
+const TaggingScreen = ({ navigation, route }) => {
   const [search, setSearchBar] = useState("");
   const [recipeLimit, setRecipeLimit] = useState(20);
   const [recipeData, setRecipeData] = useState([]);
   const { state } = useContext(AuthContext);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setRecipeData([]);
+      //setSearchBar("");
+      searchRecipe();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const searchRecipe = async () => {
     if (search != "") {

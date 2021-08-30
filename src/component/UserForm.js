@@ -62,7 +62,8 @@ const UserForm = ({ onPost, bname, errorMessage }) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
+    // flex:1,
+    //justifyContent: "center",
   },
   buttonStyle: {
     color: "#0F52BA",

@@ -5,14 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   BackHandler,
+  ActivityIndicator
 } from "react-native";
 import UserForm from "../component/UserForm";
 import { Context } from "../context/AuthProvider";
 import firebase from "firebase";
+import LoadingBig from "../component/LoadingBig";
 
 const SignInScreen = ({ navigation }) => {
   const { state, signin, showErr, clearErrorMessage } = useContext(Context);
   const { admin, setAdmin } = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
@@ -21,31 +24,31 @@ const SignInScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate("UserDetail");
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     navigation.navigate("UserDetail");
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     backAction
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   const onSignIn = ({ email, password }) => {
+    setIsLoading(true);
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         var user = userCredential.user;
-        //console.log(user);
-        //signin({ email, userid: firebase.auth().currentUser.uid });
         checkAdmin(user.uid, email);
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
         showErr(errorMessage);
+        setIsLoading(false);
       });
   };
 
@@ -61,18 +64,14 @@ const SignInScreen = ({ navigation }) => {
           console.log('Chk admin  ',snapshot.exists);
           if (snapshot.exists) {
             const data = snapshot.data();
-            //console.log("chkadmin data", data);
             console.log(data)
             if (data.admin == true) {
               signin({ email, userid, isAdmin: true, foodAllergyArr: data.foodAllergyArr});
-              //navigation.navigate("AdminHome");
             } else {
               signin({ email, userid, isAdmin: false, foodAllergyArr: data.foodAllergyArr });
-              //navigation.navigate("DrawerHome");
             }
           } else {
             signin({ email, userid, isAdmin: false });
-            //navigation.navigate("DrawerHome");
           }
         });
         return true;
@@ -81,7 +80,10 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
-  
+  if(isLoading)
+  {
+    return <LoadingBig />
+  }  
 
   return (
     <>
@@ -93,6 +95,11 @@ const SignInScreen = ({ navigation }) => {
         errorMessage={state.errorMessage}
       />
       {/* {state.errorMessage ? <Text style color= "#FF0000" >   Something went wrong</Text> : null} */}
+      <TouchableOpacity onPress={() => {
+        navigation.navigate("ForgetPass")
+      }}>
+        <Text style={styles.forgetTextStyle}>Forget Password</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("UserDetail")}>
         <Text style={styles.lastElement}>Create a new Account? Sign up</Text>
       </TouchableOpacity>
@@ -108,14 +115,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
   },
-
   secondText: {
     textAlign: "center",
     marginBottom: 35,
     color: "grey",
     fontSize: 17,
   },
-
   lastElement: {
     textAlign: "center",
     margin: 10,
@@ -123,6 +128,13 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 13,
   },
+  forgetTextStyle:{
+    color:"blue",
+    fontSize:15,
+    fontWeight:'bold',
+    textAlign:'right',
+    marginHorizontal:10
+  }
 });
 
 export default SignInScreen;

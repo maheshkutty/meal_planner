@@ -10,6 +10,7 @@ import {
 import { TabView, TabBar } from "react-native-tab-view";
 import firebase from "firebase";
 import "firebase/firestore";
+import expoNotificationApi from "../../config/expoNotificationApi";
 
 const successMessage = (msg) => {
   ToastAndroid.showWithGravityAndOffset(
@@ -19,6 +20,24 @@ const successMessage = (msg) => {
     25,
     30
   );
+};
+
+const sendPushNotification = (userid) => {
+  firebase
+    .firestore()
+    .collection("user")
+    .doc(userid.toString())
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        if (doc.data().expotoken != undefined)
+          expoNotificationApi.post("/send", {
+            to: doc.data().expotoken.toString(),
+            title: "Meal Planner Notification",
+            body: "Hey you got new recipe plan, Please check the app",
+          });
+      }
+    });
 };
 
 const BreakFastRoute = ({ navigation, breakFastData }) => {
@@ -37,7 +56,7 @@ const BreakFastRoute = ({ navigation, breakFastData }) => {
         onPress={() => {
           navigation.navigate("SearchAdminRecipe", { flag: "breakfast" });
         }}
-        buttonStyle={[styles.buttonStyle,styles.addMargin]}
+        buttonStyle={[styles.buttonStyle, styles.addMargin]}
       />
     </View>
   );
@@ -187,6 +206,7 @@ const SaveRoute = ({
           .then(() => {
             navigation.goBack();
             successMessage("Meal Plan Successfully Saved");
+            sendPushNotification(userid);
           })
           .catch((error) => {
             console.log(error);
@@ -273,7 +293,10 @@ const CreateWeeklyPlan = ({ navigation, route }) => {
   const [userid, setUserId] = useState("");
 
   useEffect(() => {
-    if (route.params?.generic == false) setUserId(route.params.userid);
+    if (route.params?.generic == false) 
+    {
+      setUserId(route.params.userid);
+    }
   }, []);
 
   useEffect(() => {
@@ -408,11 +431,11 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: "#0F52BA",
     //marginVertical:10,
-    marginHorizontal:10
+    marginHorizontal: 10,
   },
-  addMargin:{
-    marginVertical:10
-  }
+  addMargin: {
+    marginVertical: 10,
+  },
 });
 
 export default CreateWeeklyPlan;

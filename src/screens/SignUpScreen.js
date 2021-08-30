@@ -5,12 +5,13 @@ import UserForm from "../component/UserForm";
 import firebase from "firebase";
 import "firebase/firestore";
 import { Context } from "../context/AuthProvider";
+import LoadingBig from "../component/LoadingBig";
 
 const SignUpScreen = ({ navigation, route }) => {
   const { name, weight, heFeet, heInches, date, foodAllergyArr, gender } =
     route.params;
   const { state, signup, showErr, clearErrorMessage } = useContext(Context);
-  const [userToken, setUserToken] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
 
   useEffect(() => {
@@ -21,6 +22,7 @@ const SignUpScreen = ({ navigation, route }) => {
   }, [navigation]);
 
   const registerUser = ({ email, password }) => {
+    setIsLoading(true);
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -51,6 +53,7 @@ const SignUpScreen = ({ navigation, route }) => {
           .catch((err) => {
             console.log("Hello2", err);
             showErr(err.message);
+            setIsLoading(false);
           });
       })
       .catch((err) => {
@@ -58,8 +61,14 @@ const SignUpScreen = ({ navigation, route }) => {
         console.log(typeof err);
         showErr(err.message);
         console.log(state.errorMessage);
+        setIsLoading(false);
       });
   };
+
+  if(isLoading)
+  {
+    return <LoadingBig />
+  }  
 
   return (
     <>

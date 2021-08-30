@@ -16,6 +16,7 @@ import {
 import UserDetailScreen from "./src/screens/UserDetailScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import SignInScreen from "./src/screens/SignInScreen";
+import ForgetPassScreen from "./src/screens/ForgetPassScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import LandingScreen from "./src/screens/LandingScreen";
 import ResolveAuthScreen from "./src/screens/ResolveAuthScreen";
@@ -61,6 +62,14 @@ if (firebase.apps.length === 0) {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+
+function SplashScreen() {
+  return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
 
 function Home() {
   return (
@@ -249,8 +258,6 @@ function DrawerHome() {
 }
 
 function App() {
-  //const { state } = useContext(AuthContext);
-
   return (
     <AuthProvider>
       <NavigationContainer>
@@ -334,11 +341,7 @@ function App() {
             }}
             component={ShowUserScreen}
           />
-          <Stack.Screen name="AddRecipe" options={{
-              headerShown: true,
-              title: "Add recipe",
-              headerTransparent: false,
-            }} component={AddRecipeScreen} />
+          <Stack.Screen name="ForgetPass" component={ForgetPassScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

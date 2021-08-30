@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { SearchBar, CheckBox, Button } from "react-native-elements";
 import firebase from "firebase";
@@ -8,34 +8,50 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Context as AuthContext } from "../../context/AuthProvider";
 
 const SearchAdminRecipe = ({ navigation, route }) => {
-  const [search, setSearchBar] = useState("");
+  const [searchAdmin, setSearchAdminBar] = useState("");
   const [recipeLimit, setRecipeLimit] = useState(20);
   const [recipeData, setRecipeData] = useState([]);
   const { flag } = route.params;
   const { state } = useContext(AuthContext);
 
-  const searchRecipe = async () => {
-    if (search != "") {
-      const response = await recipeApi.post(
-        "/recipe",
-        {
-          search,
-          foodAllergy: [],
-          limit: recipeLimit,
-        },
-        {
-          headers: {
-            Authorization: state.accessToken,
+  useEffect(() => {
+    navigation.addListener("blur", () => {
+      setRecipeData([]);
+      setSearchAdminBar("");
+    })
+    return () => {
+      setRecipeData([]);
+      setSearchAdminBar("");
+    }
+  },[])
+
+  const searchRecipeData = async () => {
+    try{
+      if (searchAdmin != "" && state.accessToken != "") {
+        const response = await recipeApi.post(
+          "/recipe",
+          {
+            search: searchAdmin,
+            foodAllergy: [],
+            limit: recipeLimit,
           },
-        }
-      );
-      response.data = response.data.map((item) => {
-        return {
-          ...item,
-          checked: false,
-        };
-      });
-      setRecipeData(response.data);
+          {
+            headers: {
+              Authorization: state.accessToken,
+            },
+          }
+        );
+        response.data = response.data.map((item) => {
+          return {
+            ...item,
+            checked: false,
+          };
+        });
+        setRecipeData(response.data);
+      }
+    }
+    catch(err){
+      console.log("searchRecipe error", err.message);
     }
   };
 
@@ -43,8 +59,8 @@ const SearchAdminRecipe = ({ navigation, route }) => {
     <View style={styles.container}>
       <SearchBar
         placeholder="Type here...."
-        onChangeText={setSearchBar}
-        value={search}
+        onChangeText={setSearchAdminBar}
+        value={searchAdmin}
         lightTheme={true}
         containerStyle={{
           backgroundColor: "#0F52BA",
@@ -54,7 +70,7 @@ const SearchAdminRecipe = ({ navigation, route }) => {
         }}
         searchIcon={<MaterialIcons name="search" size={28} color="#0F52BA" />}
         onBlur={() => {
-          searchRecipe();
+          searchRecipeData();
         }}
       />
       <FlatList

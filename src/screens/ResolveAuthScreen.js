@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Text } from "react-native";
 import { Context as AuthContext } from "../context/AuthProvider";
 import firebase from "firebase";
 import "firebase/firestore";
+import { FlatList } from "react-native";
 
 //when app starts load this function is called based on that user redirected to page
 const ResolveAuthScreen = ({ navigation }) => {
@@ -48,16 +49,20 @@ const ResolveAuthScreen = ({ navigation }) => {
           });
       }
     });
-    return unsubscribeAuth;
+    return () => {
+      unsubscribeAuth();
+    };
   }, []);
+
   if (!isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: "center", backgroundColor:"#cacaca" }}>
+        <ActivityIndicator size={80} color="blue" />
       </View>
     );
+  }else{
+    return null;
   }
-  return null;
 };
 
 export default ResolveAuthScreen;

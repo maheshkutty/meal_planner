@@ -12,6 +12,7 @@ import "firebase/firestore";
 import { Context as AuthContext } from "../../context/AuthProvider";
 import { TabView, TabBar } from "react-native-tab-view";
 import ToastMessage from "../../component/ToastMessage";
+import { FontAwesome } from "@expo/vector-icons";
 
 const CommonPlan = ({ planStructure, navigation }) => {
   return (
@@ -44,9 +45,32 @@ const CommonPlan = ({ planStructure, navigation }) => {
   );
 };
 
-const CustomPlan = ({ customPlan, checkPlan, navigation }) => {
+const CustomPlan = ({ customPlan, checkPlan, navigation, showMsg }) => {
   return (
     <View>
+      {showMsg != null ? (
+        <View style={{
+          justifyContent:'center',
+          alignItems:'center',
+          flexDirection:'row',
+          marginVertical:10,
+          backgroundColor:'#1d1160',
+          padding:10,
+          marginHorizontal:2,
+          borderRadius:5,
+          elevation: 5,
+        }}>
+          <FontAwesome
+            name="info-circle"
+            size={24}
+            color="white"
+            style={{ marginHorizontal: 5 }}
+          />
+          <Text style={{ textAlign: "center", color:'white', fontWeight:'bold'}}>
+            {showMsg}
+          </Text>
+        </View>
+      ) : null}
       <Button
         title="Request for meal plan"
         onPress={() => {
@@ -54,6 +78,7 @@ const CustomPlan = ({ customPlan, checkPlan, navigation }) => {
         }}
         buttonStyle={styles.buttonStyle}
         type="outline"
+        disabled={showMsg != null ? true : false}
       />
       <View>
         <FlatList
@@ -87,10 +112,25 @@ const PlanViewScreen = ({ navigation }) => {
   const [planStructure, setPlanStructure] = useState([]);
   const { state } = useContext(AuthContext);
   const [customPlan, setCustomPlan] = useState([]);
+  const [showMsg, setShowMsg] = useState(null);
 
   const createIncrement = () => {
     var seq = "P" + new Date().getTime();
     return seq;
+  };
+
+  const chkUserRequest = () => {
+    if(state.userid != "")
+      firebase
+        .firestore()
+        .collection("requestplan")
+        .doc(state.userid.toString())
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            setShowMsg("Your custom plan will be available soon.......");
+          }
+        });
   };
 
   const checkPlan = async () => {
@@ -134,6 +174,7 @@ const PlanViewScreen = ({ navigation }) => {
             date: firebase.firestore.Timestamp.fromDate(new Date()),
           });
         ToastMessage("Request Send To Admin");
+        chkUserRequest();
       } else {
         ToastMessage("Request For meal plan already send");
       }
@@ -155,22 +196,24 @@ const PlanViewScreen = ({ navigation }) => {
         });
         setPlanStructure(planData);
       });
+    if(state.userid != "")
+      firebase
+        .firestore()
+        .collection("userplan")
+        .doc(state.userid.toString())
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          const customPlan = [];
+          if (doc.exists) {
+            customPlan[0] = data.plan;
+          }
+          setCustomPlan(customPlan);
+        });
   }, [state.accessToken]);
 
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("userplan")
-      .doc(state.userid.toString())
-      .get()
-      .then((doc) => {
-        const data = doc.data();
-        const customPlan = [];
-        if (doc.exists) {
-          customPlan[0] = data.plan;
-        }
-        setCustomPlan(customPlan);
-      });
+    chkUserRequest();
   }, [state.accessToken]);
 
   const layout = useWindowDimensions();
@@ -193,6 +236,7 @@ const PlanViewScreen = ({ navigation }) => {
             customPlan={customPlan}
             checkPlan={checkPlan}
             navigation={navigation}
+            showMsg={showMsg}
           />
         );
       default:
@@ -247,7 +291,7 @@ const styles = StyleSheet.create({
   planContainer: {
     margin: 10,
     borderRadius: 10,
-    backgroundColor: "#6200EE",
+    backgroundColor: "#3457D5",
     padding: 10,
     elevation: 5,
   },

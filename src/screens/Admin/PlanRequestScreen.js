@@ -5,6 +5,25 @@ import "firebase/firestore";
 import { FlatList } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Tooltip, Text } from "react-native-elements";
+import expoNotificationApi from "../../config/expoNotificationApi";
+
+const sendPushNotification = (userid) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(userid.toString())
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        if (doc.data().expotoken != undefined)
+          expoNotificationApi.post("/send", {
+            to: doc.data().expotoken.toString(),
+            title: "Meal Planner Notification",
+            body: "Hey you got new recipe plan, Please check the app",
+          });
+      }
+    });
+};
 
 const PlanRequestScreen = ({ navigation }) => {
   const [requestPlan, setRequestPlan] = useState([]);

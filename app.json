@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "meal_planner",
+    "name": "Meal Planner",
     "slug": "meal_planner",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,10 +23,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.mealplanner"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-notifications"
+    ]
   }
 }

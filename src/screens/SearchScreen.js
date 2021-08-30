@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,23 +20,26 @@ const SearchScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
 
   const searchRecipe = async () => {
-    console.log("search",state.accessToken);
-    if (search != "") {
-      const response = await recipeApi.post(
-        "/recipe",
-        {
-          search,
-          foodAllergy: state.foodAllergyArr,
-          limit: recipeLimit,
-        },
-        {
-          headers: {
-            Authorization: state.accessToken,
+    try {
+      console.log("search", state.accessToken, search);
+      if (search != "") {
+        const response = await recipeApi.post(
+          "/recipe",
+          {
+            search,
+            foodAllergy: state.foodAllergyArr,
+            limit: recipeLimit,
           },
-        }
-      );
-
-      setRecipeData(response.data);
+          {
+            headers: {
+              Authorization: state.accessToken,
+            },
+          }
+        );
+        setRecipeData(response.data);
+      }
+    } catch (err) {
+      console.log("searchRecipe user ", err.message);
     }
 
     // firebase

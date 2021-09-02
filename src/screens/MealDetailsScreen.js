@@ -122,6 +122,7 @@ const MealDetailsScreen = ({ navigation, route }) => {
   const { state } = useContext(AuthProvider);
   const [showAllergyWarn, setShowAllergyWarn] = useState(false);
   const [chkScrollEvt, setChkScrollEvt] = useState(false);
+  const [firstAllergy, setFirstAllergy] = useState("");
 
   useEffect(() => {
     console.log("isAdmin", state.isAdmin);
@@ -151,6 +152,7 @@ const MealDetailsScreen = ({ navigation, route }) => {
       for (let j = 0; j < ingredientsArr.length; j++) {
         if (ingredientsArr[j].match(item) != null) {
           setShowAllergyWarn(true);
+          setFirstAllergy(item);
           break;
         }
       }
@@ -344,7 +346,7 @@ const MealDetailsScreen = ({ navigation, route }) => {
               style={{ marginHorizontal: 5 }}
             />
             <Text style={styles.warnMsg}>
-              This food contains {state.foodAllergyArr[0]} not suitable for you
+              This food contains {firstAllergy} not suitable for you
             </Text>
           </View>
         ) : null}

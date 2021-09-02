@@ -127,6 +127,7 @@ const PlanViewScreen = ({ navigation }) => {
         .doc(state.userid.toString())
         .get()
         .then((doc) => {
+          console.log("existes", doc.exists, showMsg);
           if (doc.exists) {
             setShowMsg("Your custom plan will be available soon.......");
           }
@@ -196,6 +197,7 @@ const PlanViewScreen = ({ navigation }) => {
         });
         setPlanStructure(planData);
       });
+    console.log(state.userid);
     if(state.userid != "")
       firebase
         .firestore()
@@ -214,6 +216,9 @@ const PlanViewScreen = ({ navigation }) => {
 
   useEffect(() => {
     chkUserRequest();
+    return () => {
+      setShowMsg(null);
+    }
   }, [state.accessToken]);
 
   const layout = useWindowDimensions();

@@ -22,13 +22,13 @@ const HomeScreen = ({ navigation, route }) => {
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState("");
 
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false,
-    }),
-  });
+  // Notifications.setNotificationHandler({
+  //   handleNotification: async () => ({
+  //     shouldShowAlert: true,
+  //     shouldPlaySound: false,
+  //     shouldSetBadge: false,
+  //   }),
+  // });
 
   let componentMounted = true;
 
@@ -66,48 +66,48 @@ const HomeScreen = ({ navigation, route }) => {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  useEffect(() => {
-    if (componentMounted) {
-      registerForPushNotificationsAsync().then((token) => {
-        setExpoPushToken(token);
-        if (authState.userid.toString() != "") {
-          firebase
-            .firestore()
-            .collection("user")
-            .doc(authState.userid.toString())
-            .set(
-              {
-                expotoken: token,
-              },
-              { merge: true }
-            )
-            .then(() => {
-              console.log("Successfully merged");
-            })
-            .catch((err) => {
-              console.log("Error while setting push notification", err.message);
-            });
-        }
-      });
+  // useEffect(() => {
+  //   if (componentMounted) {
+  //     registerForPushNotificationsAsync().then((token) => {
+  //       setExpoPushToken(token);
+  //       if (authState.userid.toString() != "") {
+  //         firebase
+  //           .firestore()
+  //           .collection("user")
+  //           .doc(authState.userid.toString())
+  //           .set(
+  //             {
+  //               expotoken: token,
+  //             },
+  //             { merge: true }
+  //           )
+  //           .then(() => {
+  //             console.log("Successfully merged");
+  //           })
+  //           .catch((err) => {
+  //             console.log("Error while setting push notification", err.message);
+  //           });
+  //       }
+  //     });
 
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          setNotification(notification);
-        });
+  //     notificationListener.current =
+  //       Notifications.addNotificationReceivedListener((notification) => {
+  //         setNotification(notification);
+  //       });
 
-      responseListener.current =
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log(response);
-        });
-    }
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-      componentMounted = false;
-    };
-  }, []);
+  //     responseListener.current =
+  //       Notifications.addNotificationResponseReceivedListener((response) => {
+  //         console.log(response);
+  //       });
+  //   }
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(
+  //       notificationListener.current
+  //     );
+  //     Notifications.removeNotificationSubscription(responseListener.current);
+  //     componentMounted = false;
+  //   };
+  // }, []);
 
   async function registerForPushNotificationsAsync() {
     let token;

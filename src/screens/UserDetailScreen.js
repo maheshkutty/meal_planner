@@ -35,7 +35,7 @@ let userSchema = yup.object().shape({
 
 const checkDOB = () => {};
 
-const SignUpScreen = ({ navigation }) => {
+const UserDetailScreen = ({ navigation }) => {
   DropDownPicker.setListMode("SCROLLVIEW");
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState("date");
@@ -232,4 +232,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SignUpScreen;
+export default UserDetailScreen;

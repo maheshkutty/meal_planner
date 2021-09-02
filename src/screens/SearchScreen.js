@@ -19,9 +19,21 @@ const SearchScreen = ({ navigation }) => {
   const [recipeData, setRecipeData] = useState([]);
   const { state } = useContext(AuthContext);
 
+  useEffect(() => {
+    return () => {
+      setRecipeData([]);
+    }
+  },[])
+
   const searchRecipe = async () => {
     try {
       console.log("search", state.accessToken, search);
+      let data = {
+        search,
+        foodAllergy: state.foodAllergyArr,
+        limit: recipeLimit,
+      }
+      console.log(data);
       if (search != "") {
         const response = await recipeApi.post(
           "/recipe",

@@ -10,9 +10,8 @@ import {
 import { Input, Button } from "react-native-elements";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const ShowTag = ({ tags, submitTag, removeTag }) => {
+const OtherAllergyTag = ({ stateTag, setStateTag }) => {
   const [newTag, setNewtag] = useState("");
-  const [stateTag, setStateTag] = useState(tags);
   const displayTags = () => {
     return stateTag.map((item) => {
       return (
@@ -22,7 +21,6 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
             onPress={() => {
               let tempTags = stateTag.filter((tag) => tag !== item);
               setStateTag(tempTags);
-              removeTag(item);
             }}
           >
             <MaterialIcons name="cancel" size={24} color="white" />
@@ -39,13 +37,15 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
         value={newTag}
         autoCorrect={false}
         onChangeText={(item) => {
-          const regex = /^[a-zA-Z0-9_ ]*$/g;
-          if (!regex.test(item)) setNewtag("");
-          else setNewtag(item);
+            const regex = /^[a-zA-Z0-9_ ]*$/g;
+            if(!regex.test(item))
+                setNewtag("");
+            else
+                setNewtag(item);
         }}
         onKeyPress={(e) => {
+          console.log("Called key press");
           if (e.nativeEvent.key == " " && newTag != " ") {
-            console.log("Space key pressed");
             let tempTag = newTag.toLowerCase();
             tempTag = tempTag.trimEnd();
             if (stateTag.indexOf(tempTag) < 0) {
@@ -56,14 +56,6 @@ const ShowTag = ({ tags, submitTag, removeTag }) => {
           if (newTag == " ") setNewtag("");
         }}
       />
-      <Pressable
-        style={[styles.button, styles.buttonClose]}
-        onPress={() => {
-          submitTag(stateTag);
-        }}
-      >
-        <Text style={styles.buttonTextStyle}>SAVE</Text>
-      </Pressable>
     </View>
   );
 };
@@ -107,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ShowTag;
+export default OtherAllergyTag;

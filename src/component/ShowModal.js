@@ -14,9 +14,9 @@ import firebase from "firebase";
 import "firebase/firestore";
 import recipeApi from "../config/recipeApi";
 import { Context as AuthContext } from "../context/AuthProvider";
+import ToastMessage from "./ToastMessage";
 
 const ShowModal = ({ recipe }) => {
-  //const tagState = Object.entries(recipe.tag);
   const [modalVisible, setModalVisible] = useState(false);
   const [tag, setTag] = useState(recipe.tag);
   const { state } = useContext(AuthContext);
@@ -45,6 +45,7 @@ const ShowModal = ({ recipe }) => {
 
   const populateTag = () => {
     const tagArr = [];
+    console.log(tag);
     for (let i in tag) {
       if (i !== "region") {
         if (tag[i] === 1) tagArr.push(i);
@@ -54,39 +55,72 @@ const ShowModal = ({ recipe }) => {
   };
 
   const submitTag = (newTagArr) => {
+    let newTagState = tag;
     newTagArr.forEach((item) => {
-      setTag({ ...tag, [item]: 1 });
+      newTagState[item] = 1;
     });
+    setTag(newTagState);
     firebase
       .firestore()
       .collection("recipes")
       .doc(recipe.recipe_id.toString())
-      .update({
-        tag: tag,
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          firebase
+            .firestore()
+            .collection("recipes")
+            .doc(recipe.recipe_id.toString())
+            .update({
+              tag: tag,
+            })
+            .catch((error) => {
+              console.log("firebase tag", error.message);
+            });
+        } else {
+          let newRecipeData = recipe;
+          newRecipeData.tag = tag;
+          firebase
+            .firestore()
+            .collection("recipes")
+            .doc(newRecipeData.recipe_id.toString())
+            .set(newRecipeData)
+            .then(() => {
+              console.log("Document successfully wite");
+            });
+        }
       })
-      .catch((error) => {
-        console.log(error.message);
+      .catch((err) => {
+        console.log(err);
       });
     recipeApi
-      .post("/recipe_tag", {
-        recipe_id: recipe.recipe_id.toString(),
-        tag: tag,
-      }, {
-        headers: {
-          'Authorization': state.accessToken,
+      .post(
+        "/recipe_tag",
+        {
+          recipe_id: recipe.recipe_id.toString(),
+          tag: tag,
         },
-      })
+        {
+          headers: {
+            Authorization: state.accessToken,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("rest api tag", error);
       });
+    setModalVisible(!modalVisible);
+    ToastMessage("Tag added successfully");
   };
 
   const removeTag = (tagToRemove) => {
     const tagArr = tag;
-    delete tagArr[tagToRemove];
+    if (["lunch", "dinner", "breakfast"].indexOf(tagToRemove) >= 0)
+      tagArr[tagToRemove] = 0;
+    else delete tagArr[tagToRemove];
     setTag({ ...tagArr });
   };
 

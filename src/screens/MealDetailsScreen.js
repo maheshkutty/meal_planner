@@ -20,6 +20,7 @@ import ShowModal from "../component/ShowModal";
 import { FontAwesome } from "@expo/vector-icons";
 import recipeApi from "../config/recipeApi";
 import Svg, { Circle, Rect, Text as TextSVG } from "react-native-svg";
+import AddRecipeHistory from "../component/AddRecipeHistory";
 
 const fetchIngredients = (ingredients) => {
   ingredients = ingredients.replace(/\^/g, "\n");
@@ -38,7 +39,11 @@ const fetchCookingDirection = (direction) => {
 const fetchNurtionalValues = (nutrional) => {
   try {
     if (nutrional == undefined || nutrional.length == 0) {
-      return <Text style={{marginHorizontal:10, marginVertical:20}}>No data found</Text>;
+      return (
+        <Text style={{ marginHorizontal: 10, marginVertical: 20 }}>
+          No data found
+        </Text>
+      );
     } else {
       nutrional = nutrional.replace(/u\'/g, '"');
       nutrional = nutrional.replace(/\'/g, '"');
@@ -69,13 +74,14 @@ const fetchNurtionalValues = (nutrional) => {
               >
                 {nutrional.calories.displayValue}
               </TextSVG>
-              <TextSVG 
+              <TextSVG
                 stroke="#111111"
                 fill="#111111"
                 fontSize="15"
                 x="38"
                 y="55"
-                textAnchor="middle">
+                textAnchor="middle"
+              >
                 Cal
               </TextSVG>
             </Svg>
@@ -112,7 +118,11 @@ const fetchNurtionalValues = (nutrional) => {
     }
   } catch (err) {
     console.log("fetchNurtionalValues err", err.message);
-    return <Text style={{marginHorizontal:10, marginVertical:20}}>No data found</Text>;
+    return (
+      <Text style={{ marginHorizontal: 10, marginVertical: 20 }}>
+        No data found
+      </Text>
+    );
   }
 };
 
@@ -352,6 +362,10 @@ const MealDetailsScreen = ({ navigation, route }) => {
         ) : null}
         <Text style={styles.nutrionalLable}>Nutrition Per Serving</Text>
         {fetchNurtionalValues(recipe.nutritions)}
+        <AddRecipeHistory
+          recipeId={recipe.recipe_id.toString()}
+          recipeName={recipe.recipe_name.toString()}
+        />
         <Text style={styles.ingriHeader}>Ingredients</Text>
         <Text style={styles.ingriList}>
           {fetchIngredients(recipe.ingredients)}
@@ -401,7 +415,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 17,
     fontWeight: "bold",
-    color:"#2C3531"
+    color: "#2C3531",
   },
   ingriList: {
     fontSize: 18,
@@ -415,7 +429,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   mainView: {
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
   buttonStyle: {
     color: "#0F52BA",
@@ -427,12 +441,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 10,
     alignItems: "center",
-    marginHorizontal:5
+    marginHorizontal: 5,
   },
   warnMsg: {
     color: "#ff0f0f",
-    fontWeight:"bold",
-    fontSize:15
+    fontWeight: "bold",
+    fontSize: 15,
   },
   ratingHeader: {
     textAlign: "center",
@@ -451,9 +465,9 @@ const styles = StyleSheet.create({
   },
   nutrionalLable: {
     marginHorizontal: 10,
-    fontSize:18,
-    fontWeight:'bold',
-    color:"#2C3531"
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2C3531",
   },
   nutrionalTextStyle: {
     fontWeight: "bold",

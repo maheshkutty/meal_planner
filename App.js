@@ -37,6 +37,7 @@ import PlanRequestScreen from "./src/screens/Admin/PlanRequestScreen";
 import ShowUserScreen from "./src/screens/Admin/ShowUserScreen";
 import PlanViewScreen from "./src/screens/Admin/PlanViewScreen";
 import AddRecipeScreen from "./src/screens/Admin/AddRecipeScreen";
+import ShowUserDiary from "./src/screens/ShowUserDiary";
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -135,6 +136,18 @@ function Home() {
             },
           }}
         />
+        <Tab.Screen
+          name="ShowDiary"
+          component={ShowUserDiary}
+          options={{
+            title: "Daily Plan",
+            tabBarIcon: ({ focused, color, size }) => {
+              return (
+                <MaterialCommunityIcons name="book" size={size} color={color} />
+              );
+            },
+          }}
+        />
       </Tab.Navigator>
     </MealProvider>
   );
@@ -152,8 +165,7 @@ function AdminHome() {
             iconName = "tag";
           } else if (route.name == "Weekly") {
             iconName = "calendar";
-          }
-          else if(route.name == "AddRecipe"){
+          } else if (route.name == "AddRecipe") {
             iconName = "edit";
           }
           return <FontAwesome name={iconName} size={size} color={color} />;
@@ -201,9 +213,13 @@ function AdminHome() {
           },
         }}
       />
-      <Tab.Screen name="AddRecipe" component={AddRecipeScreen} options={{
-        title:"Add Recipe"
-      }} />
+      <Tab.Screen
+        name="AddRecipe"
+        component={AddRecipeScreen}
+        options={{
+          title: "Add Recipe",
+        }}
+      />
     </Tab.Navigator>
   );
 }

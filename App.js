@@ -42,22 +42,31 @@ import {
   Provider as AuthProvider,
   Context as AuthContext,
 } from "./src/context/AuthProvider";
-
 import { Provider as MealProvider } from "./src/context/MealProvider";
+import Constants from "expo-constants";
+
+const {
+  apiKey,
+  authDomain,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId,
+  measurementId,
+} = Constants.manifest.extra;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDoZu1NbGW0PhU7UFVdgkTISuR9CLqlFDI",
-  authDomain: "meal-planner-71e71.firebaseapp.com",
-  projectId: "meal-planner-71e71",
-  storageBucket: "meal-planner-71e71.appspot.com",
-  messagingSenderId: "958386612193",
-  appId: "1:958386612193:web:5919012351d160f57054a0",
-  measurementId: "G-HBERRK6WR6",
+  apiKey,
+  authDomain,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId,
+  measurementId,
 };
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
-  //console.log(firebase);
 }
 
 const Stack = createStackNavigator();
@@ -140,7 +149,7 @@ function Home() {
           name="ShowDiary"
           component={ShowUserDiary}
           options={{
-            title: "Daily Plan",
+            title: "Diary",
             tabBarIcon: ({ focused, color, size }) => {
               return (
                 <MaterialCommunityIcons name="book" size={size} color={color} />

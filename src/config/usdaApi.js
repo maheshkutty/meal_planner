@@ -1,11 +1,12 @@
 import axios from 'axios';
+import Constants from "expo-constants";
 
 export default axios.create({
-    baseURL:"https://api.nal.usda.gov/fdc/v1/foods",
+    baseURL:Constants.manifest.extra.USDAKEY,
     headers:{
         "Content-Type": "application/json"
     },
     params:{
-        "api_key":"4745ryZOUpkjufOEPrASN4kU95sMMLgmOkK36ba4"
+        "api_key":Constants.manifest.extra.USDAKEY
     }
 })

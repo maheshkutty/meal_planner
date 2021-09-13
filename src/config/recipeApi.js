@@ -1,8 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
+import Constants from "expo-constants";;
+
 
 export default axios.create({
-    baseURL:"http://damp-harbor-63298.herokuapp.com",
-    headers:{
-        "Content-Type": "application/json"
-    }
-})
+  baseURL: Constants.manifest.extra.NODEURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
